@@ -10,11 +10,10 @@ def readCSV(csv_filepath):
 class InputUtil:
     def __init__(self, csv_path):
         df = readCSV(csv_path)
-        self.inputMatrix = np.zeros((len(df.x1), 3))
-        self.resultVector = np.zeros((len(df.x1), 1))
+        self.inputMatrix = np.zeros((len(df.x1), 4))
         self.weightMatrix = np.zeros((1, 3))
         for i in range(len(df.x1)):
-            for j in range(3):
+            for j in range(4):
                 if j == 0:
                     self.inputMatrix[i][j] = df.x1[i]
                 elif j == 1:
@@ -22,10 +21,7 @@ class InputUtil:
                 else:
                     self.inputMatrix[i][j] = df.x3[i]
 
-            self.resultVector[i] = df.y[i]
-
-    def getResultVector(self):
-        return self.resultVector
+            self.inputMatrix[i] = df.y[i]
 
     def getInputMatrix(self):
         return self.inputMatrix
