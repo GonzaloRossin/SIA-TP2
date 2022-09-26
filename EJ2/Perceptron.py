@@ -4,7 +4,6 @@ import random
 import ActivationType
 from Utils import readCSV
 
-
 def calculateO(inputSum, perceptronType, beta):
     if perceptronType == ActivationType.ActivationType.LINEAR:
         return inputSum
@@ -23,7 +22,9 @@ def calculateError(inputMatrix, Oresult):
 def getInputSum(input_vector, weight_vector):
     Sum = 0
     for i in range(len(input_vector) - 1):
-        Sum += weight_vector[i] * input_vector[i]
+        weight = weight_vector[i]
+        inputValue = input_vector[i]
+        Sum += weight * inputValue
     return Sum
 
 
@@ -50,27 +51,33 @@ def calculateWeights(input_vectorList, input_vector, weight_vector, perceptronTy
 
 def readBetaparameter():
     df = readCSV('parameters.csv')
-    return df.beta
+    return float(df.beta[0])
 
 
 def readWeirdNparameter():
     df = readCSV('parameters.csv')
-    return df.weird_N
+    return float(df.weird_N[0])
 
 
 def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type):
     beta = readBetaparameter()
     N = readWeirdNparameter()
+    wOverTime =[]
+    errorVsT = []
     i = 0
     w = weight_vector
-    error_min = 1000
+    error_min = 1000000
     while error_min > 0 and i < upper_limit:
         pickInput = random.choice(input_vectorList)
         h = getInputSum(pickInput, w)
         O = calculateO(h, perceptron_type, beta)
         w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
+        wOverTime.append(w)
         error = calculateError(input_vectorList, O)
         if error < error_min:
             error_min = error
+            errorVsT.append(error)
             w_min = w
         i += 1
+
+    return wOverTime, errorVsT
