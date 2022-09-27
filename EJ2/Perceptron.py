@@ -79,7 +79,7 @@ def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_typ
         w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
         wOverTime.append(w)
         error = calculateError(input_vectorList, O)
-        errorVsT.append(error_min)
+        errorVsT.append(error)
         if error < error_min:
             error_min = error
             w_min = w
