@@ -4,6 +4,7 @@ import random
 import ActivationType
 from Utils import readCSV
 
+
 def calculateO(inputSum, perceptronType, beta):
     if perceptronType == ActivationType.ActivationType.LINEAR:
         return inputSum
@@ -14,7 +15,7 @@ def calculateO(inputSum, perceptronType, beta):
 def calculateError(inputMatrix, Oresult):
     toRet = 0
     for i in range(inputMatrix.shape[0]):
-        result = inputMatrix[i][len(inputMatrix[i])-1]
+        result = inputMatrix[i][len(inputMatrix[i]) - 1]
         toRet += (result - Oresult) ** 2
     return 0.5 * toRet
 
@@ -31,19 +32,22 @@ def getInputSum(input_vector, weight_vector):
 def calculateWeights(input_vectorList, input_vector, weight_vector, perceptronType, beta, N):
     ExpectedVsResultSum = 0
     newWeights = []
+    sumatoryVector = []
+    for i in range(len(input_vector) - 1):
+        inputValue = input_vector[i]
+        for j in range(len(input_vectorList)):
+            result = input_vectorList[j][len(input_vector) - 1]
+            inputSum = getInputSum(input_vectorList[j], weight_vector)
+            ExpectedVsResult = (result - calculateO(inputSum, perceptronType, beta)) * inputValue
+            if perceptronType == ActivationType.ActivationType.SIGMOID:
+                ExpectedVsResult = ExpectedVsResult * beta * (1 - calculateO(getInputSum(input_vector, weight_vector),
+                                                                             perceptronType, beta))
+            ExpectedVsResultSum += ExpectedVsResult
 
-    for i in range(len(input_vectorList)):
-        result = input_vectorList[i][len(input_vector)-1]
-        inputSum = getInputSum(input_vectorList[i], weight_vector)
-        ExpectedVsResultSum += result - calculateO(inputSum, perceptronType, beta)
+        sumatoryVector.append(ExpectedVsResultSum)
 
     for i in range(len(input_vector) - 1):
-
-        weightDelta = N * ExpectedVsResultSum * input_vector[i]
-
-        if perceptronType == ActivationType.ActivationType.SIGMOID:
-            weightDelta = weightDelta * beta * (1 - calculateO(getInputSum(input_vector, weight_vector)
-                                                               , perceptronType, beta))
+        weightDelta = N * sumatoryVector[i]
 
         newWeights.append(weight_vector[i] + weightDelta)
 
@@ -63,7 +67,7 @@ def readWeirdNparameter():
 def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type):
     beta = readBetaparameter()
     N = readWeirdNparameter()
-    wOverTime =[]
+    wOverTime = []
     errorVsT = []
     i = 0
     w = weight_vector
