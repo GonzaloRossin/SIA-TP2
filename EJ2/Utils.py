@@ -20,20 +20,22 @@ def plotw(wOverT):
         w3.append(weight[2])
         iterations.append(i)
         i += 1
-    plt.plot(iterations, w1, marker="o", label="w1")
-    plt.plot(iterations, w2, marker="o", label="w2")
-    plt.plot(iterations, w3, marker="o", label="w3")
+    plt.plot(iterations, w1, label="w1")
+    plt.plot(iterations, w2, label="w2")
+    plt.plot(iterations, w3, label="w3")
     plt.legend()
     plt.show()
 
 
-def plotError(errorVsT):
+def plotError(errorVsT, iterations):
     i = 0
-    iterations = []
-    for i in errorVsT:
-        iterations.append(i)
+    iterationsList = []
+
+    while i < iterations:
+        iterationsList.append(i)
         i += 1
-    plt.plot(iterations, errorVsT, marker="o", label="error")
+
+    plt.plot(iterationsList, errorVsT, marker="o", label="error")
     plt.legend()
     plt.show()
 
@@ -41,18 +43,21 @@ def plotError(errorVsT):
 class InputUtil:
     def __init__(self, csv_path):
         df = readCSV(csv_path)
-        self.inputMatrix = np.zeros((len(df.x1), 4))
-        self.weightMatrix = np.zeros((1, 3))
+        self.inputMatrix = np.zeros((len(df.x1), 5))
+        self.weightMatrix = np.zeros((1, 4))
         for i in range(len(df.x1)):
-            for j in range(4):
+            for j in range(5):
                 if j == 0:
+                    self.inputMatrix[i][j] = 1
+                if j == 1:
                     self.inputMatrix[i][j] = df.x1[i]
-                elif j == 1:
-                    self.inputMatrix[i][j] = df.x2[i]
                 elif j == 2:
+                    self.inputMatrix[i][j] = df.x2[i]
+                elif j == 3:
                     self.inputMatrix[i][j] = df.x3[i]
-                else:
+                elif j == 4:
                     self.inputMatrix[i][j] = df.y[i]
+
 
     def getInputMatrix(self):
         return self.inputMatrix
@@ -71,5 +76,12 @@ class InputUtil:
             trainingSet = np.append(trainingSet, [row], axis=0)
             currentRows += 1
 
-        return trainingSet
+        testSet = np.array([self.inputMatrix[currentRows]])
+        currentRows += 1
+        while currentRows < totalRows:
+            row = np.array(self.inputMatrix[currentRows])
+            testSet = np.append(trainingSet, [row], axis=0)
+            currentRows += 1
+
+        return trainingSet, testSet
 

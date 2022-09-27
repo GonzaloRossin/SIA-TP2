@@ -14,7 +14,7 @@ def calculateO(inputSum, perceptronType, beta):
 def calculateError(inputMatrix, Oresult):
     toRet = 0
     for i in range(inputMatrix.shape[0]):
-        result = inputMatrix[i][3]
+        result = inputMatrix[i][len(inputMatrix[i])-1]
         toRet += (result - Oresult) ** 2
     return 0.5 * toRet
 
@@ -33,7 +33,7 @@ def calculateWeights(input_vectorList, input_vector, weight_vector, perceptronTy
     newWeights = []
 
     for i in range(len(input_vectorList)):
-        result = input_vectorList[i][3]
+        result = input_vectorList[i][len(input_vector)-1]
         inputSum = getInputSum(input_vectorList[i], weight_vector)
         ExpectedVsResultSum += result - calculateO(inputSum, perceptronType, beta)
 
@@ -42,7 +42,8 @@ def calculateWeights(input_vectorList, input_vector, weight_vector, perceptronTy
         weightDelta = N * ExpectedVsResultSum * input_vector[i]
 
         if perceptronType == ActivationType.ActivationType.SIGMOID:
-            weightDelta *= beta * (1 - calculateO(getInputSum(input_vector, weight_vector), perceptronType, beta))
+            weightDelta = weightDelta * beta * (1 - calculateO(getInputSum(input_vector, weight_vector)
+                                                               , perceptronType, beta))
 
         newWeights.append(weight_vector[i] + weightDelta)
 
@@ -74,10 +75,10 @@ def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_typ
         w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
         wOverTime.append(w)
         error = calculateError(input_vectorList, O)
+        errorVsT.append(error_min)
         if error < error_min:
             error_min = error
-            errorVsT.append(error)
             w_min = w
         i += 1
 
-    return wOverTime, errorVsT
+    return w, wOverTime, errorVsT
