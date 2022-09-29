@@ -1,56 +1,61 @@
 import numpy as np
-
 import matplotlib as plt
 
-#adicionar bias dps
+from data import *
+from activation_function import *
 
-def perceptron(input,exp_output,l_rate,epochs):
-    
-    # Initializing parapeters(theta) to zeros.
-    # +1 in n+1 for the bias term.
+
+
+def perceptron(input, expected, l_rate, epochs):
+    # weight list
     w = np.zeros(len(input[0]))
 
-    output = np.ones(len(exp_output))
+    # list for predicted values at each epoch
+    predicted = np.ones(len(expected))
     
-    # Empty list to store how many examples were 
+    # empty list to store how many examples were 
     # misclassified at every iteration.
     n_wrong = []
     
-    # Training.
-    for epoch in range(epochs):
-        
-        # variable to store #misclassified.
+    # loop for every epoch
+    n = 0
+    while n < epochs:
+        # store num of misclassified.
         n_miss = 0
         
         # looping for every example.
         for i in range(0,len(input)):
-            
-            # Insering 1 for bias, X0 = 1.
-            #i = np.insert(i, 0, 1).reshape(-1,1)
-            
-            # Calculating prediction/hypothesis.
-            f= np.dot(input[i], w)
+            # mult value for weight
+            sum_w_d = np.dot(input[i], w)
 
-            if f > 0:
-                prev=1
-            else:
-                prev=0
-
-            output[i] = prev
+            # activation function
+            predicted[i] = simple_escalon(sum_w_d, 0)
+            
+            # checking if prediction is right
+            if predicted[i] == 0:
+                if expected[i] == 1:
+                    n_miss += 1
+            elif predicted[i] == 1:
+                if expected[i] == -1:
+                    n_miss += 1
 
             for j in range(0,len(w)):
-            #Perceptron update rule
-                w[j] += l_rate*((exp_output[i] - output)*input[i][j])
+            # weight update
+                w[j] += l_rate*(expected[i] - predicted[i])*input[i][j]
                 
-                # Incrementing by 1.
-                n_miss += 1
+                
         
-        # Appending number of misclassified examples
-        # at every iteration.
+        # appending number of misclassified examples for each epoch
         n_wrong.append(n_miss)
+        n += 1
         
+    print("Wrong prediction for last epoch:")
+    print(n_wrong[epochs - 1])   
+     
     return w, n_wrong
 
 
 
+
+            
 

@@ -3,24 +3,23 @@
 
 
 def data(input):
-    input.upper()
+    x =[]
+    y=[]
     
-    if input == "AND":
-        x = [[-1, 1]
-             [1, -1]
-             [-1, -1]
+    if input.upper() == "AND":
+        x = [[-1, 1],
+             [1, -1],
+             [-1, -1],
              [1, 1]
         ]
         y = [-1, -1, -1, 1]
-    elif input == "XOR":
-        x = [[-1, 1]
-             [1, -1]
-             [-1, -1]
+    elif input.upper() == "XOR":
+        x = [[-1, 1],
+             [1, -1],
+             [-1, -1],
              [1, 1]
         ]
         y = [1, 1, -1, -1]
         
     
     return x, y
-
-#sys.argv[0]
