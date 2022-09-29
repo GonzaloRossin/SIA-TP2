@@ -3,6 +3,8 @@ import random
 
 import ActivationType
 from Utils import readCSV
+import SelectionType
+
 
 def calculateO(inputSum, perceptronType, beta):
     if perceptronType == ActivationType.ActivationType.LINEAR:
@@ -11,11 +13,12 @@ def calculateO(inputSum, perceptronType, beta):
         return math.tanh(beta * inputSum)
 
 
-def calculateError(inputMatrix, Oresult):
+def calculateError(inputMatrix, weightVector, perceptronType, beta):
     toRet = 0
     for i in range(inputMatrix.shape[0]):
-        result = inputMatrix[i][len(inputMatrix[i])-1]
-        toRet += (result - Oresult) ** 2
+        result = inputMatrix[i][len(inputMatrix[i]) - 1]
+        inputSum = getInputSum(inputMatrix[i], weightVector)
+        toRet += (result - calculateO(inputSum, perceptronType, beta)) ** 2
     return 0.5 * toRet
 
 
@@ -31,19 +34,22 @@ def getInputSum(input_vector, weight_vector):
 def calculateWeights(input_vectorList, input_vector, weight_vector, perceptronType, beta, N):
     ExpectedVsResultSum = 0
     newWeights = []
+    sumatoryVector = []
+    for i in range(len(input_vector) - 1):
+        inputValue = input_vector[i]
+        for j in range(len(input_vectorList)):
+            result = input_vectorList[j][len(input_vector) - 1]
+            inputSum = getInputSum(input_vectorList[j], weight_vector)
+            ExpectedVsResult = (result - calculateO(inputSum, perceptronType, beta)) * inputValue
+            if perceptronType == ActivationType.ActivationType.SIGMOID:
+                ExpectedVsResult = ExpectedVsResult * beta * (1 - calculateO(getInputSum(input_vector, weight_vector),
+                                                                             perceptronType, beta))
+            ExpectedVsResultSum += ExpectedVsResult
 
-    for i in range(len(input_vectorList)):
-        result = input_vectorList[i][len(input_vector)-1]
-        inputSum = getInputSum(input_vectorList[i], weight_vector)
-        ExpectedVsResultSum += result - calculateO(inputSum, perceptronType, beta)
+        sumatoryVector.append(ExpectedVsResultSum)
 
     for i in range(len(input_vector) - 1):
-
-        weightDelta = N * ExpectedVsResultSum * input_vector[i]
-
-        if perceptronType == ActivationType.ActivationType.SIGMOID:
-            weightDelta = weightDelta * beta * (1 - calculateO(getInputSum(input_vector, weight_vector)
-                                                               , perceptronType, beta))
+        weightDelta = N * sumatoryVector[i]
 
         newWeights.append(weight_vector[i] + weightDelta)
 
@@ -60,25 +66,41 @@ def readWeirdNparameter():
     return float(df.weird_N[0])
 
 
-def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type):
+def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type, selectionType):
     beta = readBetaparameter()
     N = readWeirdNparameter()
-    wOverTime =[]
+    wOverTime = []
     errorVsT = []
     i = 0
     w = weight_vector
     error_min = 1000000
-    while error_min > 0 and i < upper_limit:
-        pickInput = random.choice(input_vectorList)
+    w_min = None
+    inputRows = input_vectorList.shape[0]
+    if SelectionType.SelectionType.RANDOM:
+        while error_min > 0 and i < upper_limit:
+            pickInput = random.choice(input_vectorList)
+            h = getInputSum(pickInput, w)
+            O = calculateO(h, perceptron_type, beta)
+            w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
+            error = calculateError(input_vectorList, w, perceptron_type, beta)
+            if error < error_min:
+                error_min = error
+                w_min = w
+            wOverTime.append(w)
+            errorVsT.append(error)
+            i += 1
+    else:
+     while error_min > 0 and i < inputRows:
+        pickInput = input_vectorList[i]
         h = getInputSum(pickInput, w)
         O = calculateO(h, perceptron_type, beta)
         w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
-        wOverTime.append(w)
-        error = calculateError(input_vectorList, O)
-        errorVsT.append(error_min)
+        error = calculateError(input_vectorList, w, perceptron_type, beta)
         if error < error_min:
             error_min = error
             w_min = w
+        wOverTime.append(w)
+        errorVsT.append(error)
         i += 1
 
-    return w, wOverTime, errorVsT
+    return w, wOverTime, errorVsT, error_min

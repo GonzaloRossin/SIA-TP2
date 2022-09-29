@@ -35,7 +35,7 @@ def plotError(errorVsT, iterations):
         iterationsList.append(i)
         i += 1
 
-    plt.plot(iterationsList, errorVsT, marker="o", label="error")
+    plt.plot(iterationsList, errorVsT, label="error")
     plt.legend()
     plt.show()
 
