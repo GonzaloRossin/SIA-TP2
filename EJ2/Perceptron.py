@@ -3,6 +3,7 @@ import random
 
 import ActivationType
 from Utils import readCSV
+import SelectionType
 
 
 def calculateO(inputSum, perceptronType, beta):
@@ -12,11 +13,12 @@ def calculateO(inputSum, perceptronType, beta):
         return math.tanh(beta * inputSum)
 
 
-def calculateError(inputMatrix, Oresult):
+def calculateError(inputMatrix, weightVector, perceptronType, beta):
     toRet = 0
     for i in range(inputMatrix.shape[0]):
         result = inputMatrix[i][len(inputMatrix[i]) - 1]
-        toRet += (result - Oresult) ** 2
+        inputSum = getInputSum(inputMatrix[i], weightVector)
+        toRet += (result - calculateO(inputSum, perceptronType, beta)) ** 2
     return 0.5 * toRet
 
 
@@ -64,7 +66,7 @@ def readWeirdNparameter():
     return float(df.weird_N[0])
 
 
-def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type):
+def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type, selectionType):
     beta = readBetaparameter()
     N = readWeirdNparameter()
     wOverTime = []
@@ -72,17 +74,33 @@ def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_typ
     i = 0
     w = weight_vector
     error_min = 1000000
-    while error_min > 0 and i < upper_limit:
-        pickInput = random.choice(input_vectorList)
+    w_min = None
+    inputRows = input_vectorList.shape[0]
+    if SelectionType.SelectionType.RANDOM:
+        while error_min > 0 and i < upper_limit:
+            pickInput = random.choice(input_vectorList)
+            h = getInputSum(pickInput, w)
+            O = calculateO(h, perceptron_type, beta)
+            w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
+            error = calculateError(input_vectorList, w, perceptron_type, beta)
+            if error < error_min:
+                error_min = error
+                w_min = w
+            wOverTime.append(w)
+            errorVsT.append(error)
+            i += 1
+    else:
+     while error_min > 0 and i < inputRows:
+        pickInput = input_vectorList[i]
         h = getInputSum(pickInput, w)
         O = calculateO(h, perceptron_type, beta)
         w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
-        wOverTime.append(w)
-        error = calculateError(input_vectorList, O)
-        errorVsT.append(error)
+        error = calculateError(input_vectorList, w, perceptron_type, beta)
         if error < error_min:
             error_min = error
             w_min = w
+        wOverTime.append(w)
+        errorVsT.append(error)
         i += 1
 
-    return w, wOverTime, errorVsT
+    return w, wOverTime, errorVsT, error_min
