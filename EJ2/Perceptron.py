@@ -1,6 +1,7 @@
 from locale import normalize
 import math
 import random
+import numpy as np
 
 import ActivationType
 from Utils import readCSV
@@ -46,13 +47,13 @@ class Perceptron:
     def getMinValue(self):
         minValue = self.inputMatrix[0][4]
         for i in range(self.inputMatrix.shape[0] - 1):
-            if self.inputMatrix[i+1][4] < minValue:
-                minValue = self.inputMatrix[i+1][4]
+            if self.inputMatrix[i + 1][4] < minValue:
+                minValue = self.inputMatrix[i + 1][4]
 
         self.minResult = minValue
 
     def normalize(self, result):
-        return (2*(result-self.minResult)/(self.maxResult-self.minResult))-1
+        return (2 * (result - self.minResult) / (self.maxResult - self.minResult)) - 1
 
     def getInputSum(self, input_vector, weight_vector):
         Sum = 0
@@ -103,24 +104,44 @@ class Perceptron:
         wOverTime = []
         errorVsT = []
         i = 0
+        j = 0
         w = weight_vector
         error_min = 1000000
         w_min = None
         self.getMinMaxValues()
-        if selectionType == SelectionType.SelectionType.EPOCA:
-            upper_limit = input_vectorList.shape[0]
+        inputRows = input_vectorList.shape[0]
+        if selectionType ==  SelectionType.SelectionType.RANDOM:
+            while error_min > 0 and i < upper_limit:
+                pickInput = random.choice(input_vectorList)
+                h = self.getInputSum(pickInput, w)
+                O = self.calculateO(h, self.perceptronType, beta)
+                w = self.calculateWeights(input_vectorList, pickInput, w, beta, N)
+                error = self.calculateError(input_vectorList, w, self.perceptronType, beta)
+                if error < error_min:
+                    error_min = error
+                    w_min = w
+                wOverTime.append(w)
+                errorVsT.append(error)
+                i += 1
+        else:
+            shuffledTrainingSet = input_vectorList
+            error = None
+            while error_min > 0 and i < upper_limit:
 
-        while error_min > 0 and i < upper_limit:
-            pickInput = random.choice(input_vectorList)
-            h = self.getInputSum(pickInput, w)
-            O = self.calculateO(h, self.perceptronType, beta)
-            w = self.calculateWeights(input_vectorList, pickInput, w, beta, N)
-            error = self.calculateError(input_vectorList, w, self.perceptronType, beta)
-            if error < error_min:
-                error_min = error
-                w_min = w
-            wOverTime.append(w)
-            errorVsT.append(error)
-            i += 1
+                np.random.shuffle(shuffledTrainingSet)
+                while error_min > 0 and j < inputRows:
+                    pickInput = shuffledTrainingSet[i]
+                    h = self.getInputSum(pickInput, w)
+                    O = self.calculateO(h, self.perceptronType, beta)
+                    w = self.calculateWeights(input_vectorList, pickInput, w, beta, N)
+                    error = self.calculateError(input_vectorList, w, self.perceptronType, beta)
+                    j += 1
+                
+                if error < error_min:
+                    error_min = error
+                    w_min = w        
+                wOverTime.append(w)
+                errorVsT.append(error)
+                i += 1
 
         return w_min, wOverTime, errorVsT, error_min, i

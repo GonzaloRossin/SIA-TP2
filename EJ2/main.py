@@ -1,5 +1,3 @@
-from pyexpat import model
-from unittest import TestResult, result
 from SelectionType import SelectionType
 from Utils import *
 from Perceptron import Perceptron
@@ -10,12 +8,12 @@ inputUtil = InputUtil('TP2-ej2-conjunto.csv')
 inputMatrix = inputUtil.getInputMatrix()
 weightMatrix = inputUtil.getWeightMatrix()
 trainingSet, testSet = inputUtil.getTrainingSetByPercentage(60)
-iterations = 600
+iterations = 100
 perceptron = Perceptron(inputMatrix, weightMatrix[0], ActivationType.ActivationType.SIGMOID)
 
 weights, wVsIteration, errorVsIteration, error_min, iterations = perceptron.trainPerceptron(trainingSet, weightMatrix[0]
                                                                                             , iterations
-                                                                                            , SelectionType.RANDOM)
+                                                                                            , SelectionType.EPOCA)
 
 print('E1   |  E2    | E3    ||| RESULT                |   EXPECTED')
 for test_vector in testSet:
