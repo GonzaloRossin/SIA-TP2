@@ -5,7 +5,8 @@ from multilayer_utils.Activations import *
 
 def excitation_forward(X, W, b):
     H = np.dot(W,X)+b   # hyperplane with bias
-    return H
+    cache = (X, W, b)
+    return H, cache
 
 def excitation_activation_forward(V_prev, W, b, activation):
     H, excitation_cache = excitation_forward(V_prev, W, b)

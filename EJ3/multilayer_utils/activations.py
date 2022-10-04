@@ -12,7 +12,7 @@ def sigmoid_backward(dV, cache):
     return dH
 
 def relu_activation(H):
-    V = max(0.0, H)
+    V = np.maximum(0, H)
     cache = H
     return V, cache
 
