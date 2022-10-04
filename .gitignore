@@ -1,6 +1,7 @@
-
 .idea/inspectionProfiles/
 
 .idea/
 
 EJ2/__pycache__/
+EJ3/*/__pycache__/
+env

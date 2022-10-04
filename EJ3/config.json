@@ -1,0 +1,16 @@
+{
+    "input_file": "path",
+    "training_set_ratio": 70,
+
+    "apply_bias": 0,
+    "num_layers": 4,
+    "num_iterations": 1000,
+    "learning_rate": 0.0075,
+
+    "model_type": "logistic",
+    "hidden_activation": "relu",
+    "output_activation": "sigmoid",
+
+    "use_mini_batches": 0,
+    "mini_batch_size": 1
+}
