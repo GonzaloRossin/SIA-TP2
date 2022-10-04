@@ -27,11 +27,11 @@ def plotw(wOverT):
     plt.show()
 
 
-def plotError(errorVsT, iterations):
+def plotError(errorVsT):
     i = 0
     iterationsList = []
 
-    while i < iterations:
+    while i < len(errorVsT):
         iterationsList.append(i)
         i += 1
 
