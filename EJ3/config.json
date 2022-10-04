@@ -1,15 +1,26 @@
 {
-    "input_file": "path",
-    "training_set_ratio": 70,
-
-    "apply_bias": 0,
-    "num_layers": 4,
-    "num_iterations": 1000,
-    "learning_rate": 0.0075,
-
     "model_type": "logistic",
     "hidden_activation": "relu",
     "output_activation": "sigmoid",
+
+    "from_file": 0,
+    "single_input_dim": 2,
+    "input_file": "./input_files/b.txt",
+    "training_set_ratio": 100,
+
+    "apply_bias": 1,
+    "learning_rate": 0.03,
+
+    "hidden_layers": {
+        "use_num": 1,
+        "num_layers": 2,
+        "max_dim": 15,
+        "__or": "",
+        "layer_dims": [10, 10]
+    },
+
+    "num_outputs": 1,
+    "num_epochs": 1000,
 
     "use_mini_batches": 0,
     "mini_batch_size": 1

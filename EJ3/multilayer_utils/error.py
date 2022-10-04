@@ -6,7 +6,7 @@ def linear_regression_loss(O, Y):
     return np.square(D) / 2
 
 def logistic_regression_loss(O, Y):
-    return np.dot(Y,np.log(O).T) + np.dot(1-Y,np.log(1-O).T)
+    return - np.dot(Y,np.log(O).T) - np.dot(1-Y,np.log(1-O).T)
 
 def compute_error(O, Y, activation):
     m = Y.shape[1]

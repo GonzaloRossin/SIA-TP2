@@ -3,11 +3,11 @@ import numpy as np
 # Receives an array containing the dimensions of each layer l
 # Returns a dictionary containing W_i and b_i for each layer l
 def initialize_parameters(layers_dim, apply_bias=True):
-    np.random.seed(1)
+    #np.random.seed(1)
     parameters = {}
     L = len(layers_dim)
     for l in range(1, L):
-        parameters['W'+str(l)] = np.random.randn(layers_dim[l], layers_dim[l-1]) * 0.01
+        parameters['W'+str(l)] = 2 * np.random.rand(layers_dim[l], layers_dim[l-1]) - 1
         if(apply_bias):
             parameters['b'+str(l)] = np.zeros((layers_dim[l], 1))
     return parameters
