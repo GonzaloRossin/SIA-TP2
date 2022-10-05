@@ -37,6 +37,9 @@ class Perceptron:
 
     def normalize(self, result):
         return (2 * (result - np.min(self.resultVector)) / (np.max(self.resultVector) - np.min(self.resultVector))) - 1
+    
+    def deNormalize(self, result):
+        return ((result+1)* (np.max(self.resultVector) - np.min(self.resultVector))* 0.5) + np.min(self.resultVector)
 
     def evaluateGdiff(self, O, beta):
         if ActivationType.ActivationType.LINEAR == self.activationType:
