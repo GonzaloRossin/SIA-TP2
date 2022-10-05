@@ -5,26 +5,18 @@ import ActivationType
 
 inputUtil = InputUtil('TP2-ej2-conjunto.csv')
 
-inputMatrix = inputUtil.getInputMatrix()
-weightMatrix = inputUtil.getWeightMatrix()
 trainingSet, testSet = inputUtil.getTrainingSetByPercentage(60)
-iterations = 9000
-perceptron = Perceptron(inputMatrix, weightMatrix[0], ActivationType.ActivationType.LINEAR)
+testSet, testResults = inputUtil.splitInputFromResult(testSet)
+iterations = 2000
+perceptron = Perceptron(trainingSet, inputUtil, inputUtil.getWeightMatrix(), ActivationType.ActivationType.LINEAR)
 
-weights, wVsIteration, errorVsIteration, error_min = perceptron.trainPerceptron(trainingSet, weightMatrix[0]
+weights, wVsIteration, errorVsIteration, error_min = perceptron.trainPerceptron(inputUtil.getWeightMatrix()[0]
                                                                                 , iterations
                                                                                 , SelectionType.EPOCA)
-
 print(weights)
 print('E1   |  E2    | E3    ||| RESULT                |   EXPECTED')
-for test_vector in testSet:
-    modelResult = weights[0] + weights[1] * test_vector[1] + weights[2] * test_vector[2] + weights[3] * test_vector[3]
-    if perceptron.perceptronType == ActivationType.ActivationType.SIGMOID:
-        print(test_vector[1], ' | ', test_vector[2], ' | ', test_vector[3], ' ||| ', modelResult, ' | ', test_vector[4])
-    else:
-        print(test_vector[1], ' | ', test_vector[2], ' | ', test_vector[3], ' ||| ', modelResult, ' | ', test_vector[4])
-print('error_min= ', error_min)
-
-plotw(wVsIteration)
+for i in range(len(testSet)):
+    modelResult = np.dot(weights, testSet[i])
+    print(testSet[i][1], ' | ', testSet[i][2], ' | ', testSet[i][3], ' ||| ', modelResult, ' | ', testResults[i][0])
 
 plotError(errorVsIteration)
