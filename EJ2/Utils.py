@@ -84,4 +84,14 @@ class InputUtil:
             currentRows += 1
 
         return trainingSet, testSet
+    
+    def splitInputFromResult(self, inputSet):
+        result = []
+        trainingSet = np.copy(inputSet)
+        resultVector = np.copy(inputSet)
+        trainingSet = np.delete(trainingSet, len(trainingSet[0])-1, 1)
+        for i in range(len(inputSet[0])-1):
+            resultVector = np.delete(resultVector, 0, 1)
+        return trainingSet, resultVector
+
 
