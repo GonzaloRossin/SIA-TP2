@@ -20,14 +20,16 @@ class Perceptron:
     def calculateO(self, h, activationType, beta):
         if activationType == ActivationType.ActivationType.LINEAR:
             return h
-        elif activationType == ActivationType.ActivationType.SIGMOID:
+        elif activationType == ActivationType.ActivationType.SIGMOID_TANH:
             return math.tanh(beta * h)
+        elif activationType == ActivationType.ActivationType.SIGMOID_LOGISTIC:
+            return 1/(1 + math.pow(math.e, -2*beta*h))
 
     def calculateError(self, inputMatrix, weightVector, activationType, beta):
         error = 0
         for i in range(inputMatrix.shape[0]):
             result = self.resultVector[i][0]
-            if activationType == ActivationType.ActivationType.SIGMOID:
+            if activationType != ActivationType.ActivationType.LINEAR:
                 result = self.normalize(result)
             h = np.dot(inputMatrix[i], weightVector)
             error += (result - self.calculateO(h, activationType, beta)) ** 2
@@ -39,8 +41,10 @@ class Perceptron:
     def evaluateGdiff(self, O, beta):
         if ActivationType.ActivationType.LINEAR == self.activationType:
             return 1
-        elif ActivationType.ActivationType.SIGMOID == self.activationType:
+        elif ActivationType.ActivationType.SIGMOID_TANH == self.activationType:
             return beta * (1 - O**2)
+        elif ActivationType.ActivationType.SIGMOID_LOGISTIC == self.activationType:
+            return 2*beta*O*(1-O)
 
     def calculateWeights(self, activationType, weight_vector, beta, N):
         sumResultVector = []
@@ -52,7 +56,7 @@ class Perceptron:
                 O = self.calculateO(h, self.activationType, beta)
                 gDiff = self.evaluateGdiff(O, beta)
                 Ei = self.trainingInput[i][j]
-                if activationType == ActivationType.ActivationType.SIGMOID:
+                if activationType != ActivationType.ActivationType.LINEAR:
                     sumResult += ((self.normalize(result) - O) * gDiff * Ei)
                 else:
                     sumResult += ((result - O) * gDiff * Ei)

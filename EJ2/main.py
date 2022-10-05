@@ -5,7 +5,6 @@ import ActivationType
 
 inputUtil = InputUtil('TP2-ej2-conjunto.csv')
 
-
 trainingSet, testSet = inputUtil.getTrainingSetByPercentage(60)
 testSet, testResults = inputUtil.splitInputFromResult(testSet)
 iterations = 2000
@@ -19,7 +18,5 @@ print('E1   |  E2    | E3    ||| RESULT                |   EXPECTED')
 for i in range(len(testSet)):
     modelResult = np.dot(weights, testSet[i])
     print(testSet[i][1], ' | ', testSet[i][2], ' | ', testSet[i][3], ' ||| ', modelResult, ' | ', testResults[i][0])
-
-
 
 plotError(errorVsIteration)
