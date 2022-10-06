@@ -1,11 +1,10 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from utils.constants import LOGISTIC
 from utils.InputHandler import InputHandler
 from multilayer_utils.Predictions import predict
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
-from multilayer_utils.Normalization import denormalize_sigmoid
+from multilayer_utils.Normalization import denormalize
 
 def ejB_main():
 
@@ -43,9 +42,8 @@ def ejB_main():
     '''
     
     if (input_handler.normalize):
-        print(f"Expected = {np.squeeze(denormalize_sigmoid(test_Y, input_handler.min_y, input_handler.max_y))}\n")
-        print(f"Output = {np.squeeze(O)}\n")
-        print(f"Denormalized Output = {np.squeeze(denormalize_sigmoid(O, input_handler.min_y, input_handler.max_y))}\n")
+        print(f"Expected = {np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
+        print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
     else:
         print(f"Expected = {np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")

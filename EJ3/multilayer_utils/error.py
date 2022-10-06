@@ -7,8 +7,7 @@ def linear_regression_loss(O, Y):
 
 def logistic_regression_loss(O, Y):
     D = 1-O
-    #return - np.dot(Y,np.log(O).T) - np.dot(1-Y,np.log(1-O).T)
-    return - np.dot(Y,np.log(O)) - np.dot(1-Y,np.log(D))
+    return - np.dot(Y,np.log(O).T) - np.dot(1-Y,np.log(1-O).T)
 
 def tanh_loss(O, Y):
     loss_pos_1 = np.dot((1+Y).T, np.log(1+Y) - np.log(1+O))

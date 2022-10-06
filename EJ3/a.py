@@ -5,7 +5,7 @@ from utils.constants import LOGISTIC
 from utils.InputHandler import InputHandler
 from multilayer_utils.Predictions import predict
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
-from multilayer_utils.Normalization import denormalize_sigmoid
+from multilayer_utils.Normalization import denormalize
 
 def ejA_main():
 
@@ -42,25 +42,25 @@ def ejA_main():
     '''
     
     if (input_handler.normalize):
-        print(f"Expected = {np.squeeze(denormalize_sigmoid(test_Y, input_handler.min_y, input_handler.max_y))}\n")
-        print(f"Denormalized Output = {np.squeeze(denormalize_sigmoid(O, input_handler.min_y, input_handler.max_y))}\n")
+        print(f"Expected = {np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
+        print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
     else:
         print(f"Expected = {np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")
 
     '''
     print(f"Trained parameters\n {parameters}\n")
+    '''
 
     # Graphics
     fig = plt.subplot()
     fig.set_title("Error function")
     fig.set_xlabel("Epochs")
     fig.set_ylabel("Error")
-    fig.set_ylim([0, 1])
+    #fig.set_ylim([0, 1])
     #fig.plot(errors, marker='o')
     fig.plot(errors)
     plt.show()
-    '''
 
     # TODO: Output graphics
 

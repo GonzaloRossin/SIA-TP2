@@ -1,6 +1,6 @@
 import numpy as np
 from utils.constants import LOGISTIC
-from multilayer_utils.Normalization import normalize_sigmoid
+from multilayer_utils.Normalization import normalize
 
 class InputHandler:
     
@@ -41,7 +41,7 @@ class InputHandler:
 
         X, Y = self.read_input(input['input_file'], num_features)
         if (self.normalize):
-            Y, self.min_y, self.max_y = normalize_sigmoid(Y)
+            Y, self.min_y, self.max_y = normalize(Y, self.output_activation)
 
         self.ratio = input['training_set_ratio']
         training_idx = len(X) * self.ratio // 100
@@ -52,8 +52,8 @@ class InputHandler:
 
         self.training_set_X = np.array(train_X).T
         self.test_set_X = np.array(test_X).T
-        self.training_set_Y = np.array(train_Y)
-        self.test_set_Y = np.array(test_Y)
+        self.training_set_Y = np.array(train_Y).T
+        self.test_set_Y = np.array(test_Y).T
         
         if (input['hidden_layers']['use_num']):
             self.layers_dim = self.random_layers_dim(num_features, num_outputs, input['hidden_layers']['num_layers'], input['hidden_layers']['max_dim'])
