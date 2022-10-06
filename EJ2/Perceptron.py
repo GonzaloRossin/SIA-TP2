@@ -9,55 +9,68 @@ import SelectionType
 
 
 class Perceptron:
-    def __init__(self, inputMatrix, utils, weightVector, activationType):
+    def __init__(self, inputMatrix, utils, weightVector, activationType, etha, beta):
         self.inputMatrix = inputMatrix
         self.weightVector = weightVector
         self.trainingInput = None
         self.resultVector = None
+        self.etha = etha
+        self.beta = beta
         self.utils = utils
         self.activationType = activationType
+        self.min, self.max = self.calculateMinMax()
 
-    def calculateO(self, h, activationType, beta):
+    def calculateO(self, h, activationType):
         if activationType == ActivationType.ActivationType.LINEAR:
             return h
         elif activationType == ActivationType.ActivationType.SIGMOID_TANH:
-            return math.tanh(beta * h)
+            return math.tanh(self.beta * h)
         elif activationType == ActivationType.ActivationType.SIGMOID_LOGISTIC:
-            return 1/(1 + math.pow(math.e, -2*beta*h))
+            return 1/(1 + math.pow(math.e, -2*self.beta*h))
 
-    def calculateError(self, inputMatrix, weightVector, activationType, beta):
+    def calculateError(self, inputMatrix, weightVector, activationType):
         error = 0
         for i in range(inputMatrix.shape[0]):
             result = self.resultVector[i][0]
             if activationType != ActivationType.ActivationType.LINEAR:
                 result = self.normalize(result)
             h = np.dot(inputMatrix[i], weightVector)
-            error += (result - self.calculateO(h, activationType, beta)) ** 2
+            error += (result - self.calculateO(h, activationType)) ** 2
         return 0.5 * error
 
+    def calculateMinMax(self):
+        inputMatrix, resultVector = self.utils.splitInputFromResult(self.utils.inputMatrix)
+        return min(resultVector)[0], max(resultVector)[0]
+
     def normalize(self, result):
-        return (2 * (result - np.min(self.resultVector)) / (np.max(self.resultVector) - np.min(self.resultVector))) - 1
+        if self.activationType == ActivationType.ActivationType.SIGMOID_TANH:
+            return (2 * (result - self.min) / (self.max - self.min)) - 1
+        else:
+            return (result - self.min)/(self.max-self.min)
     
     def deNormalize(self, result):
-        return ((result+1)* (np.max(self.resultVector) - np.min(self.resultVector))* 0.5) + np.min(self.resultVector)
+        if self.activationType == ActivationType.ActivationType.SIGMOID_TANH:
+            return ((result+1)* (self.max - self.min)* 0.5) + self.min
+        else:
+            return result * (self.max-self.min) + self.min
 
-    def evaluateGdiff(self, O, beta):
+    def evaluateGdiff(self, O):
         if ActivationType.ActivationType.LINEAR == self.activationType:
             return 1
         elif ActivationType.ActivationType.SIGMOID_TANH == self.activationType:
-            return beta * (1 - O**2)
+            return self.beta * (1 - O**2)
         elif ActivationType.ActivationType.SIGMOID_LOGISTIC == self.activationType:
-            return 2*beta*O*(1-O)
+            return 2*self.beta*O*(1-O)
 
-    def calculateWeights(self, activationType, weight_vector, beta, N):
+    def calculateWeights(self, activationType, weight_vector):
         sumResultVector = []
         for j in range(len(self.trainingInput[0])):
             sumResult = 0
             for i in range(self.trainingInput.shape[0]):
                 result = self.resultVector[i]
                 h = np.dot(self.trainingInput[i], weight_vector)
-                O = self.calculateO(h, self.activationType, beta)
-                gDiff = self.evaluateGdiff(O, beta)
+                O = self.calculateO(h, self.activationType)
+                gDiff = self.evaluateGdiff(O)
                 Ei = self.trainingInput[i][j]
                 if activationType != ActivationType.ActivationType.LINEAR:
                     sumResult += ((self.normalize(result) - O) * gDiff * Ei)
@@ -67,22 +80,11 @@ class Perceptron:
             sumResultVector.append(sumResult[0])
 
         for i in range(len(weight_vector)):
-            weight_vector[i] = weight_vector[i] + N * sumResultVector[i]
+            weight_vector[i] = weight_vector[i] + self.etha * sumResultVector[i]
 
         return weight_vector
 
-    def readBetaparameter(self):
-        df = readCSV('parameters.csv')
-        return float(df.beta[0])
-
-    def readWeirdNparameter(self):
-        df = readCSV('parameters.csv')
-        return float(df.weird_N[0])
-
     def trainPerceptron(self, weight_vector, upper_limit, selectionType):
-        beta = self.readBetaparameter()
-        N = self.readWeirdNparameter()
-        wOverTime = []
         errorVsT = []
         i = 0
         w = weight_vector
@@ -91,12 +93,12 @@ class Perceptron:
         if selectionType == SelectionType.SelectionType.RANDOM:
             while error_min > 0 and i < upper_limit:
                 pickInput = random.choice(self.inputMatrix)
-                w = self.calculateWeights(self.activationType, weight_vector, beta, N)
-                error = self.calculateError(self.inputMatrix, w, self.activationType, beta)
+                self.trainingInput, self.resultVector = self.utils.splitInputFromResult(pickInput)
+                w = self.calculateWeights(self.activationType, weight_vector)
+                error = self.calculateError(self.trainingInput, w, self.activationType)
                 if error < error_min:
                     error_min = error
                     w_min = w
-                wOverTime.append(w)
                 errorVsT.append(error)
                 i += 1
         else:
@@ -104,12 +106,12 @@ class Perceptron:
 
                 np.random.shuffle(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
-                w = self.calculateWeights(self.activationType, w, beta, N)
-                error = self.calculateError(self.trainingInput, w, self.activationType, beta)
+                w = self.calculateWeights(self.activationType, w)
+                error = self.calculateError(self.trainingInput, w, self.activationType)
                 errorVsT.append(error)
                 if error < error_min:
                     error_min = error
                     w_min = w
                 i += 1
 
-        return w_min, wOverTime, errorVsT, error_min
+        return w_min, errorVsT, error_min

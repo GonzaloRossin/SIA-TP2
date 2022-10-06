@@ -1,3 +1,4 @@
+import numpy
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -27,15 +28,33 @@ def plotw(wOverT):
     plt.show()
 
 
-def plotError(errorVsT):
+def calculateError(errorMatrix):
     i = 0
-    iterationsList = []
-
-    while i < len(errorVsT):
-        iterationsList.append(i)
+    x = []
+    maxError = []
+    average = []
+    minError = []
+    while i < len(errorMatrix[0]):
+        x.append(i)
+        errorValues = []
+        for errorList in errorMatrix:
+            errorValues.append(errorList[i])
+        arr = np.asarray(errorValues)
+        maxError.append(max(arr))
+        average.append(sum(arr)/len(errorValues))
+        minError.append(min(arr))
         i += 1
+    MError = sum(maxError)/len(maxError)
+    mError = sum(minError) / len(minError)
+    return x, MError, mError, average
 
-    plt.plot(iterationsList, errorVsT, label="error")
+
+def plotError(errorVsT):
+    x, maxError, minError, average = calculateError(errorVsT)
+
+    #plt.plot(x, minError, label = "minError")
+    plt.plot(x, average)
+    #plt.fill_between(x, average - 0.1, average + 0.1, label="error")
     plt.legend()
     plt.show()
 
@@ -58,7 +77,6 @@ class InputUtil:
                 elif j == 4:
                     self.inputMatrix[i][j] = df.y[i]
 
-
     def getInputMatrix(self):
         return self.inputMatrix
 
@@ -71,7 +89,7 @@ class InputUtil:
         trainingSet = np.array([self.inputMatrix[0]])
         currentRows = 1
 
-        while (currentRows / totalRows)*100 < percentage:
+        while (currentRows / totalRows) * 100 < percentage:
             row = np.array(self.inputMatrix[currentRows])
             trainingSet = np.append(trainingSet, [row], axis=0)
             currentRows += 1
@@ -84,14 +102,23 @@ class InputUtil:
             currentRows += 1
 
         return trainingSet, testSet
-    
+
     def splitInputFromResult(self, inputSet):
-        result = []
         trainingSet = np.copy(inputSet)
         resultVector = np.copy(inputSet)
-        trainingSet = np.delete(trainingSet, len(trainingSet[0])-1, 1)
-        for i in range(len(inputSet[0])-1):
-            resultVector = np.delete(resultVector, 0, 1)
+        if inputSet.ndim > 1:
+            trainingSet = np.delete(trainingSet, len(trainingSet[0])-1, 1)
+        else:
+            trainingSet = np.delete(trainingSet, len(trainingSet)-1)
+
+        for i in range(4):
+            if inputSet.ndim > 1:
+                resultVector = np.delete(resultVector, 0, 1)
+            else:
+                resultVector = np.delete(resultVector, 0)
+
+        if trainingSet.ndim == 1:
+            trainingSet = trainingSet[np.newaxis, :]
+            resultVector = resultVector[np.newaxis, :]
+
         return trainingSet, resultVector
-
-
