@@ -1,106 +1,109 @@
+from locale import normalize
 import math
 import random
+import numpy as np
 
 import ActivationType
 from Utils import readCSV
 import SelectionType
 
 
-def calculateO(inputSum, perceptronType, beta):
-    if perceptronType == ActivationType.ActivationType.LINEAR:
-        return inputSum
-    elif perceptronType == ActivationType.ActivationType.SIGMOID:
-        return math.tanh(beta * inputSum)
+class Perceptron:
+    def __init__(self, inputMatrix, utils, weightVector, activationType, etha, beta):
+        self.inputMatrix = inputMatrix
+        self.weightVector = weightVector
+        self.trainingInput = None
+        self.resultVector = None
+        self.etha = etha
+        self.beta = beta
+        self.utils = utils
+        self.activationType = activationType
+        self.min, self.max = self.calculateMinMax()
 
+    def calculateO(self, h, activationType):
+        if activationType == ActivationType.ActivationType.LINEAR:
+            return h
+        elif activationType == ActivationType.ActivationType.SIGMOID_TANH:
+            return math.tanh(self.beta * h)
+        elif activationType == ActivationType.ActivationType.SIGMOID_LOGISTIC:
+            return 1/(1 + math.pow(math.e, -2*self.beta*h))
 
-def calculateError(inputMatrix, weightVector, perceptronType, beta):
-    toRet = 0
-    for i in range(inputMatrix.shape[0]):
-        result = inputMatrix[i][len(inputMatrix[i]) - 1]
-        inputSum = getInputSum(inputMatrix[i], weightVector)
-        toRet += (result - calculateO(inputSum, perceptronType, beta)) ** 2
-    return 0.5 * toRet
+    def calculateError(self, inputMatrix, weightVector, activationType):
+        error = 0
+        for i in range(inputMatrix.shape[0]):
+            result = self.resultVector[i][0]
+            if activationType != ActivationType.ActivationType.LINEAR:
+                result = self.normalize(result)
+            h = np.dot(inputMatrix[i], weightVector)
+            error += (result - self.calculateO(h, activationType)) ** 2
+        return 0.5 * error
 
+    def calculateMinMax(self):
+        inputMatrix, resultVector = self.utils.splitInputFromResult(self.utils.inputMatrix)
+        return min(resultVector)[0], max(resultVector)[0]
 
-def getInputSum(input_vector, weight_vector):
-    Sum = 0
-    for i in range(len(input_vector) - 1):
-        weight = weight_vector[i]
-        inputValue = input_vector[i]
-        Sum += weight * inputValue
-    return Sum
+    def normalize(self, result):
+        if self.activationType == ActivationType.ActivationType.SIGMOID_TANH:
+            return (2 * (result - self.min) / (self.max - self.min)) - 1
+        else:
+            return (result - self.min)/(self.max-self.min)
+    
+    def deNormalize(self, result):
+        if self.activationType == ActivationType.ActivationType.SIGMOID_TANH:
+            return ((result+1) * (self.max - self.min) * 0.5) + self.min
+        else:
+            return result * (self.max-self.min) + self.min
 
+    def evaluateGdiff(self, O):
+        if ActivationType.ActivationType.LINEAR == self.activationType:
+            return 1
+        elif ActivationType.ActivationType.SIGMOID_TANH == self.activationType:
+            return self.beta * (1 - O**2)
+        elif ActivationType.ActivationType.SIGMOID_LOGISTIC == self.activationType:
+            return 2*self.beta*O*(1-O)
 
-def calculateWeights(input_vectorList, input_vector, weight_vector, perceptronType, beta, N):
-    ExpectedVsResultSum = 0
-    newWeights = []
-    sumatoryVector = []
-    for i in range(len(input_vector) - 1):
-        inputValue = input_vector[i]
-        for j in range(len(input_vectorList)):
-            result = input_vectorList[j][len(input_vector) - 1]
-            inputSum = getInputSum(input_vectorList[j], weight_vector)
-            ExpectedVsResult = (result - calculateO(inputSum, perceptronType, beta)) * inputValue
-            if perceptronType == ActivationType.ActivationType.SIGMOID:
-                ExpectedVsResult = ExpectedVsResult * beta * (1 - calculateO(getInputSum(input_vector, weight_vector),
-                                                                             perceptronType, beta))
-            ExpectedVsResultSum += ExpectedVsResult
+    def calculateWeights(self, activationType, weight_vector):
+        sumResultVector = []
+        for j in range(len(self.trainingInput[0])):
+            sumResult = 0
+            for i in range(self.trainingInput.shape[0]):
+                result = self.resultVector[i]
+                h = np.dot(self.trainingInput[i], weight_vector)
+                O = self.calculateO(h, self.activationType)
+                gDiff = self.evaluateGdiff(O)
+                Ei = self.trainingInput[i][j]
+                if activationType != ActivationType.ActivationType.LINEAR:
+                    sumResult += ((self.normalize(result) - O) * gDiff * Ei)
+                else:
+                    sumResult += ((result - O) * gDiff * Ei)
 
-        sumatoryVector.append(ExpectedVsResultSum)
+            sumResultVector.append(sumResult[0])
 
-    for i in range(len(input_vector) - 1):
-        weightDelta = N * sumatoryVector[i]
+        for i in range(len(weight_vector)):
+            weight_vector[i] = weight_vector[i] + self.etha * sumResultVector[i]
 
-        newWeights.append(weight_vector[i] + weightDelta)
+        return weight_vector
 
-    return newWeights
-
-
-def readBetaparameter():
-    df = readCSV('parameters.csv')
-    return float(df.beta[0])
-
-
-def readWeirdNparameter():
-    df = readCSV('parameters.csv')
-    return float(df.weird_N[0])
-
-
-def trainPerceptron(input_vectorList, weight_vector, upper_limit, perceptron_type, selectionType):
-    beta = readBetaparameter()
-    N = readWeirdNparameter()
-    wOverTime = []
-    errorVsT = []
-    i = 0
-    w = weight_vector
-    error_min = 1000000
-    w_min = None
-    inputRows = input_vectorList.shape[0]
-    if SelectionType.SelectionType.RANDOM:
+    def trainPerceptron(self, weight_vector, upper_limit, selectionType):
+        errorVsT = []
+        i = 0
+        w = weight_vector
+        error_min = 1000000
+        w_min = None
+    
         while error_min > 0 and i < upper_limit:
-            pickInput = random.choice(input_vectorList)
-            h = getInputSum(pickInput, w)
-            O = calculateO(h, perceptron_type, beta)
-            w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
-            error = calculateError(input_vectorList, w, perceptron_type, beta)
+            if selectionType == SelectionType.SelectionType.RANDOM:
+                pickInput = random.choice(self.inputMatrix)
+                self.trainingInput, self.resultVector = self.utils.splitInputFromResult(pickInput)
+            else:
+                np.random.shuffle(self.inputMatrix)
+                self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
+            w = self.calculateWeights(self.activationType, w)
+            error = self.calculateError(self.trainingInput, w, self.activationType)
             if error < error_min:
                 error_min = error
                 w_min = w
-            wOverTime.append(w)
             errorVsT.append(error)
             i += 1
-    else:
-     while error_min > 0 and i < inputRows:
-        pickInput = input_vectorList[i]
-        h = getInputSum(pickInput, w)
-        O = calculateO(h, perceptron_type, beta)
-        w = calculateWeights(input_vectorList, pickInput, w, perceptron_type, beta, N)
-        error = calculateError(input_vectorList, w, perceptron_type, beta)
-        if error < error_min:
-            error_min = error
-            w_min = w
-        wOverTime.append(w)
-        errorVsT.append(error)
-        i += 1
 
-    return w, wOverTime, errorVsT, error_min
+        return w_min, errorVsT, error_min
