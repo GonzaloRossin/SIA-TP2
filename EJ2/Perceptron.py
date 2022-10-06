@@ -50,7 +50,7 @@ class Perceptron:
     
     def deNormalize(self, result):
         if self.activationType == ActivationType.ActivationType.SIGMOID_TANH:
-            return ((result+1)* (self.max - self.min)* 0.5) + self.min
+            return ((result+1) * (self.max - self.min) * 0.5) + self.min
         else:
             return result * (self.max-self.min) + self.min
 
@@ -90,28 +90,20 @@ class Perceptron:
         w = weight_vector
         error_min = 1000000
         w_min = None
-        if selectionType == SelectionType.SelectionType.RANDOM:
-            while error_min > 0 and i < upper_limit:
+    
+        while error_min > 0 and i < upper_limit:
+            if selectionType == SelectionType.SelectionType.RANDOM:
                 pickInput = random.choice(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(pickInput)
-                w = self.calculateWeights(self.activationType, weight_vector)
-                error = self.calculateError(self.trainingInput, w, self.activationType)
-                if error < error_min:
-                    error_min = error
-                    w_min = w
-                errorVsT.append(error)
-                i += 1
-        else:
-            while error_min > 0 and i < upper_limit:
-
+            else:
                 np.random.shuffle(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
-                w = self.calculateWeights(self.activationType, w)
-                error = self.calculateError(self.trainingInput, w, self.activationType)
-                errorVsT.append(error)
-                if error < error_min:
-                    error_min = error
-                    w_min = w
-                i += 1
+            w = self.calculateWeights(self.activationType, weight_vector)
+            error = self.calculateError(self.trainingInput, w, self.activationType)
+            if error < error_min:
+                error_min = error
+                w_min = w
+            errorVsT.append(error)
+            i += 1
 
         return w_min, errorVsT, error_min
