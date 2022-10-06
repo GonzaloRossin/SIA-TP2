@@ -1,42 +1,66 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-from utils.input_handler import InputHandler
+from utils.constants import LOGISTIC
+from utils.InputHandler import InputHandler
 from multilayer_utils.Predictions import predict
-from multilayer_utils.Normalization import normalize_sigmoid
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
+from multilayer_utils.Normalization import denormalize_sigmoid
 
 def ejA_main():
-
-    train_X = np.array([[-1,1,-1,1],[1,-1,-1,1]])
-    train_Y = np.array([[1,1,-1,-1]])
-    
-    print(f"\nX =\n{train_X}\n")
-    print(f"Y = {np.squeeze(train_Y)}")
 
     with open('config.json', 'r') as f:
         json_file = json.load(f)
         input_handler = InputHandler(json_file)
 
-    normalized_Y = normalize_sigmoid(train_Y)
-    print(f"Y_norm = {np.squeeze(normalized_Y)}\n")
+    train_X = input_handler.training_set_X
+    train_Y = input_handler.training_set_Y
+    
+    '''
+    print(f"train_X = \n{train_X}\n")
+    print(f"train_Y = {train_Y}\n")
+    print(f"test_X = \n{test_X}\n")
+    print(f"test_Y = {test_Y}\n")
+    '''
     
     # Training
-    parameters, errors = multilayer_perceptron(train_X, normalized_Y, input_handler)
-    #print(f"Trained parameters\n {parameters}")
+    parameters, errors = multilayer_perceptron(train_X, train_Y, input_handler)
 
     # Predictions
-    O, P = predict(train_X, parameters, input_handler.apply_bias, input_handler.model_type)
-    print(f"Output = {np.squeeze(O)}\n")  # Direct output
+    if (input_handler.ratio == 100):    # if training set uses all the dataset
+        test_X = train_X
+        test_Y = train_Y
+    else:    
+        test_X = input_handler.test_set_X
+        test_Y = input_handler.test_set_Y
+    
+    O, _ = predict(test_X, parameters, input_handler.apply_bias, input_handler.model_type)
+
+    '''
+    print(f"Y_norm = {np.squeeze(train_Y)}\n")
     print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
+    '''
+    
+    if (input_handler.normalize):
+        print(f"Expected = {np.squeeze(denormalize_sigmoid(test_Y, input_handler.min_y, input_handler.max_y))}\n")
+        print(f"Denormalized Output = {np.squeeze(denormalize_sigmoid(O, input_handler.min_y, input_handler.max_y))}\n")
+    else:
+        print(f"Expected = {np.squeeze(test_Y)}\n")
+        print(f"Output = {np.squeeze(O)}\n")
+
+    '''
+    print(f"Trained parameters\n {parameters}\n")
 
     # Graphics
     fig = plt.subplot()
     fig.set_title("Error function")
-    fig.set_ylabel("Error")
     fig.set_xlabel("Epochs")
+    fig.set_ylabel("Error")
+    fig.set_ylim([0, 1])
+    #fig.plot(errors, marker='o')
     fig.plot(errors)
     plt.show()
+    '''
 
     # TODO: Output graphics
 

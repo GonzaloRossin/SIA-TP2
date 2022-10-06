@@ -1,27 +1,28 @@
 {
     "model_type": "logistic",
+    "normalize": 1,
     "hidden_activation": "relu",
     "output_activation": "sigmoid",
 
-    "from_file": 0,
-    "single_input_dim": 2,
-    "input_file": "./input_files/b.txt",
+    "input_file": "./input_files/a.txt",
     "training_set_ratio": 100,
+    
+    "num_features": 2,
+    "num_outputs": 1,
 
     "apply_bias": 1,
-    "learning_rate": 0.03,
+    "learning_rate": 0.003,
+
+    "num_epochs": 5000,
+    
+    "use_mini_batches": 0,
+    "mini_batch_size": 1,
 
     "hidden_layers": {
-        "use_num": 1,
-        "num_layers": 2,
-        "max_dim": 15,
+        "use_num": 0,
+        "num_layers": 5,
+        "max_dim": 20,
         "__or": "",
         "layer_dims": [10, 10]
-    },
-
-    "num_outputs": 1,
-    "num_epochs": 1000,
-
-    "use_mini_batches": 0,
-    "mini_batch_size": 1
+    }
 }

@@ -15,7 +15,7 @@ def logistic_prediction(X, trained_parameters, apply_bias):
 
 def linear_prediction(X, trained_parameters, apply_bias):
     O, _ = model_forward(X, trained_parameters, apply_bias, RELU, RELU)
-    return O
+    return O, _
 
 def predict(X, trained_parameters, apply_bias, model_type):
     if (model_type == LOGISTIC):

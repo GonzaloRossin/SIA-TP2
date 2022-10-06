@@ -12,6 +12,8 @@ def excitation_activation_forward(V_prev, W, b, activation):
     H, excitation_cache = excitation_forward(V_prev, W, b)
     if (activation == SIGMOID):
         V, activation_cache = sigmoid_activation(H)
+    elif (activation == TANH):
+        V, activation_cache = tanh_activation(H)
     else:
         V, activation_cache = relu_activation(H)
     cache = (excitation_cache, activation_cache)
@@ -58,8 +60,10 @@ def excitation_activation_backward(dV, cache, activation, apply_bias):
     excitation_cache, activation_cache = cache
     if (activation == RELU):
         dH = relu_backward(dV, activation_cache)
+    elif (activation == SIGMOID):
+        dH = sigmoid_backward(dV, activation_cache)
     else:
-        dH = sigmoid_backward(dV, activation_cache)    
+        dH = tanh_backward(dV, activation_cache)
     dV_prev, dW, db = excitation_backward(dH, excitation_cache, apply_bias)
     return dV_prev, dW, db
 
