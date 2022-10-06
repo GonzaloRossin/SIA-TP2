@@ -98,7 +98,7 @@ class Perceptron:
             else:
                 np.random.shuffle(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
-            w = self.calculateWeights(self.activationType, weight_vector)
+            w = self.calculateWeights(self.activationType, w)
             error = self.calculateError(self.trainingInput, w, self.activationType)
             if error < error_min:
                 error_min = error

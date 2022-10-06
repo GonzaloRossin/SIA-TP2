@@ -41,10 +41,10 @@ def calculateError(errorMatrix):
             errorValues.append(errorList[i])
         arr = np.asarray(errorValues)
         maxError.append(max(arr))
-        average.append(sum(arr)/len(errorValues))
+        average.append(sum(arr) / len(errorValues))
         minError.append(min(arr))
         i += 1
-    MError = sum(maxError)/len(maxError)
+    MError = sum(maxError) / len(maxError)
     mError = sum(minError) / len(minError)
     return x, MError, mError, average
 
@@ -52,9 +52,9 @@ def calculateError(errorMatrix):
 def plotError(errorVsT):
     x, maxError, minError, average = calculateError(errorVsT)
 
-    #plt.plot(x, minError, label = "minError")
-    plt.plot(x, average)
-    #plt.fill_between(x, average - 0.1, average + 0.1, label="error")
+    # plt.plot(x, minError, label = "minError")
+    plt.plot(x, average, label="error")
+    #plt.fill_between(x, average - minError, average + maxError, label="error")
     plt.legend()
     plt.show()
 
@@ -107,9 +107,9 @@ class InputUtil:
         trainingSet = np.copy(inputSet)
         resultVector = np.copy(inputSet)
         if inputSet.ndim > 1:
-            trainingSet = np.delete(trainingSet, len(trainingSet[0])-1, 1)
+            trainingSet = np.delete(trainingSet, len(trainingSet[0]) - 1, 1)
         else:
-            trainingSet = np.delete(trainingSet, len(trainingSet)-1)
+            trainingSet = np.delete(trainingSet, len(trainingSet) - 1)
 
         for i in range(4):
             if inputSet.ndim > 1:
