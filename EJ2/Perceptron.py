@@ -1,3 +1,4 @@
+import copy
 from locale import normalize
 import math
 import random
@@ -86,8 +87,10 @@ class Perceptron:
 
     def trainPerceptron(self, weight_vector, upper_limit, selectionType):
         errorVsT = []
+        wVsT = []
         i = 0
         w = weight_vector
+        wVsT.append(copy.deepcopy(w))
         error_min = 1000000
         w_min = None
     
@@ -100,10 +103,11 @@ class Perceptron:
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
             w = self.calculateWeights(self.activationType, w)
             error = self.calculateError(self.trainingInput, w, self.activationType)
+            wVsT.append(copy.deepcopy(w))
             if error < error_min:
                 error_min = error
                 w_min = w
             errorVsT.append(error)
             i += 1
 
-        return w_min, errorVsT, error_min
+        return w_min, errorVsT, wVsT, error_min
