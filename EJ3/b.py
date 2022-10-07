@@ -35,7 +35,7 @@ def ejB_main():
         test_X = input_handler.test_set_X
         test_Y = input_handler.test_set_Y
     
-    O, P = predict(test_X, parameters, input_handler.apply_bias, input_handler.model_type)
+    O, P = predict(test_X, parameters, input_handler.apply_bias, input_handler.hidden_activation, input_handler.output_activation)
 
     '''
     print(f"Y_norm = {np.squeeze(train_Y)}\n")
@@ -44,11 +44,16 @@ def ejB_main():
     if (input_handler.normalize):
         print(f"Expected = {np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
         print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
+        denormalized_P = denormalize(P, input_handler.min_y, input_handler.max_y, input_handler.output_activation)
+        print(f"Prediction = {np.squeeze(denormalized_P)}\n")  # 0/1 Predictions
+        print(f"Accuracy =  {str(np.mean((denormalized_P == test_Y)))}\n")
     else:
         print(f"Expected = {np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")
+        print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
+        print(f"Accuracy =  {str(np.mean((P == test_Y)))}\n")
 
-    print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
+
 
     '''
     print(f"Trained parameters\n {parameters}\n")

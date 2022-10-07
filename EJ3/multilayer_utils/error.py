@@ -14,7 +14,7 @@ def tanh_loss(O, Y):
     log_o = np.log(1-O)
     log_y = np.log(1-Y)
     loss_neg_1 = np.dot((1-Y).T, log_y - log_o)
-    return loss_pos_1 + loss_neg_1
+    return (loss_pos_1 + loss_neg_1) / 2
 
 def compute_error(O, Y, activation):
     m = Y.shape[1]

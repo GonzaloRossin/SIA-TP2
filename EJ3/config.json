@@ -1,5 +1,4 @@
 {
-    "model_type": "logistic",
     "normalize": 0,
     "hidden_activation": "relu",
     "output_activation": "sigmoid",
@@ -11,7 +10,7 @@
     "num_outputs": 1,
 
     "apply_bias": 1,
-    "learning_rate": 0.003,
+    "learning_rate": 0.05,
 
     "num_epochs": 5000,
     

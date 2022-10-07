@@ -47,11 +47,11 @@ def model_forward(X, parameters, apply_bias, hidden_activation, output_activatio
 
 def excitation_backward(dH, cache, apply_bias):
     V_prev, W, _ = cache
-    dV_prev = np.dot(W.T, dH)   # dV_prev = delta_Error/delta_A_prev
+    dV_prev = np.dot(W.T, dH)   # dV_prev = delta_H/delta_V_prev
     m = V_prev.shape[1]
-    dW = (1/m) * np.dot(dH, V_prev.T)   # dW = delta_Error/delta_W
+    dW = (1/m) * np.dot(dH, V_prev.T)   # dW = delta_H/delta_W
     if (apply_bias):
-        db = (1/m) * np.sum(dH, axis=1, keepdims=True)  # db = delta_Error/delta_b
+        db = (1/m) * np.sum(dH, axis=1, keepdims=True)  # db = delta_H/delta_b
     else:
         db = 0
     return dV_prev, dW, db
@@ -70,11 +70,13 @@ def excitation_activation_backward(dV, cache, activation, apply_bias):
 def model_backward(O, Y, caches, hidden_activation, output_activation, apply_bias):
     gradients = {}
     L = len(caches) # number of layers
-    Y = Y.reshape(O.shape)  # TODO: Normalization
+    Y = Y.reshape(O.shape)
     if (output_activation == RELU):
-        dO = O - Y
+        dO = O - Y  # dO = delta_Error_relu/delta_O
+    elif (output_activation == SIGMOID):
+        dO = - np.divide(Y, O) + np.divide(1-Y, 1-O)    # dO = delta_Error_sigmoid/delta_O
     else:
-        dO = - np.divide(Y, O) + np.divide(1-Y, 1-O)
+        dO = np.divide(O - Y, np.dot((O+1).T,1-O))  # dO = delta_Error_tanh/delta_O
     current_cache = caches[L-1]
     if (apply_bias):
         gradients['dV'+str(L-1)], gradients['dW'+str(L)], gradients['db'+str(L)] = excitation_activation_backward(dO, current_cache, output_activation, apply_bias)

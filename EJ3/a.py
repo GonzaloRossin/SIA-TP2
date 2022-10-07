@@ -34,7 +34,7 @@ def ejA_main():
         test_X = input_handler.test_set_X
         test_Y = input_handler.test_set_Y
     
-    O, _ = predict(test_X, parameters, input_handler.apply_bias, input_handler.model_type)
+    O, P = predict(test_X, parameters, input_handler.apply_bias, input_handler.hidden_activation, input_handler.output_activation)
 
     '''
     print(f"Y_norm = {np.squeeze(train_Y)}\n")
@@ -47,6 +47,8 @@ def ejA_main():
     else:
         print(f"Expected = {np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")
+
+    print(f"Accuracy =  {str(np.mean((P == test_Y)))}\n")
 
     '''
     print(f"Trained parameters\n {parameters}\n")
