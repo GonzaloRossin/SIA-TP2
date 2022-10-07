@@ -1,9 +1,10 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
+from utils.plotter import plot_decision_boundary
 from utils.constants import LOGISTIC
 from utils.InputHandler import InputHandler
-from multilayer_utils.Predictions import predict
+from multilayer_utils.Predictions import predict, predict_decision_boundary
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
 from multilayer_utils.Normalization import denormalize
 
@@ -42,29 +43,38 @@ def ejA_main():
     '''
     
     if (input_handler.normalize):
-        print(f"Expected = {np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
+        P = denormalize(P, input_handler.min_y, input_handler.max_y, input_handler.output_activation)
+        test_Y = np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))
         print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
     else:
-        print(f"Expected = {np.squeeze(test_Y)}\n")
+        test_Y = np.squeeze(test_Y)
         print(f"Output = {np.squeeze(O)}\n")
 
-    print(f"Accuracy =  {str(np.mean((P == test_Y)))}\n")
+    print(f"Expected = {test_Y}\n")
+    print(f"Accuracy =  {np.mean((P == test_Y)) * 100}%\n")
 
     '''
     print(f"Trained parameters\n {parameters}\n")
     '''
 
     # Graphics
-    fig = plt.subplot()
-    fig.set_title("Error function")
-    fig.set_xlabel("Epochs")
-    fig.set_ylabel("Error")
-    #fig.set_ylim([0, 1])
-    #fig.plot(errors, marker='o')
-    fig.plot(errors)
-    plt.show()
 
-    # TODO: Output graphics
+    # Output graphics
+    fig, axs = plt.subplots(1,2)
+    axs[0].set_title('Data classification')
+    axs[0].set_xlabel("x1")
+    axs[0].set_ylabel("x2")
+    plot_decision_boundary(lambda x: predict_decision_boundary(x.T,parameters,input_handler.apply_bias,input_handler.hidden_activation), test_X, axs[0])
+    pairs_X = test_X.T
+    axs[0].scatter(pairs_X[:,0], pairs_X[:,1], s=100, c=test_Y)
+
+    axs[1].set_title("Error function")
+    axs[1].set_xlabel("Epochs")
+    axs[1].set_ylabel("Error")
+    #fig.set_ylim([0, 1])
+    axs[1].plot(errors)
+    
+    plt.show()
 
 
 if __name__ == "__main__":

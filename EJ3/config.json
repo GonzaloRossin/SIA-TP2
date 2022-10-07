@@ -1,16 +1,16 @@
 {
-    "normalize": 0,
+    "normalize": 1,
     "hidden_activation": "relu",
     "output_activation": "sigmoid",
 
-    "input_file": "./input_files/b.txt",
+    "input_file": "./input_files/a.txt",
     "training_set_ratio": 100,
     
-    "num_features": 35,
+    "num_features": 2,
     "num_outputs": 1,
 
-    "apply_bias": 1,
-    "learning_rate": 0.05,
+    "apply_bias": 0,
+    "learning_rate": 0.01,
 
     "num_epochs": 5000,
     
