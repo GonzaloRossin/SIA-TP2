@@ -31,30 +31,26 @@ def plotw(wOverT):
 def calculateError(errorMatrix):
     i = 0
     x = []
-    maxError = []
     average = []
-    minError = []
     while i < len(errorMatrix[0]):
         x.append(i)
         errorValues = []
         for errorList in errorMatrix:
             errorValues.append(errorList[i])
         arr = np.asarray(errorValues)
-        maxError.append(max(arr))
         average.append(sum(arr) / len(errorValues))
-        minError.append(min(arr))
         i += 1
-    MError = sum(maxError) / len(maxError)
-    mError = sum(minError) / len(minError)
-    return x, MError, mError, average
+
+    aux = np.array(errorMatrix)
+    standardDeviation= np.std(aux, 0)
+    return x, average, standardDeviation
 
 
 def plotError(errorVsT):
-    x, maxError, minError, average = calculateError(errorVsT)
+    x, average, standardDvt = calculateError(errorVsT)
 
-    # plt.plot(x, minError, label = "minError")
     plt.plot(x, average, label="error")
-    #plt.fill_between(x, average - minError, average + maxError, label="error")
+    plt.fill_between(x, average -standardDvt, average + standardDvt, color="lightblue", label="error")
     plt.legend()
     plt.show()
 

@@ -28,10 +28,10 @@ class Perceptron:
         elif activationType == ActivationType.ActivationType.SIGMOID_LOGISTIC:
             return 1/(1 + math.pow(math.e, -2*self.beta*h))
 
-    def calculateError(self, inputMatrix, weightVector, activationType):
+    def calculateError(self, inputMatrix, resultVector, weightVector, activationType):
         error = 0
         for i in range(inputMatrix.shape[0]):
-            result = self.resultVector[i][0]
+            result = resultVector[i][0]
             if activationType != ActivationType.ActivationType.LINEAR:
                 result = self.normalize(result)
             h = np.dot(inputMatrix[i], weightVector)
@@ -99,7 +99,7 @@ class Perceptron:
                 np.random.shuffle(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
             w = self.calculateWeights(self.activationType, w)
-            error = self.calculateError(self.trainingInput, w, self.activationType)
+            error = self.calculateError(self.trainingInput, self.resultVector,  w, self.activationType)
             if error < error_min:
                 error_min = error
                 w_min = w
