@@ -1,26 +1,33 @@
-from pyexpat import model
-from unittest import TestResult, result
+import copy
+
 from SelectionType import SelectionType
 from Utils import *
-from Perceptron import trainPerceptron
+from Perceptron import Perceptron
 import ActivationType
 
 inputUtil = InputUtil('TP2-ej2-conjunto.csv')
 
-inputMatrix = inputUtil.getInputMatrix()
-weightMatrix = inputUtil.getWeightMatrix()
 trainingSet, testSet = inputUtil.getTrainingSetByPercentage(60)
-iterations = 100000
+testSet, testResults = inputUtil.splitInputFromResult(testSet)
+errorListAcumulator = []
 
-weights, wVsIteration, errorVsIteration, error_min = trainPerceptron(trainingSet, weightMatrix[0], iterations,
-                                                          ActivationType.ActivationType.LINEAR, SelectionType.EPOCA)
+etha = 0.001
+iterations = 5000
+beta = 1
+for i in range(1):
+    inputCopy = copy.deepcopy(inputUtil)
+    perceptron = Perceptron(copy.deepcopy(trainingSet), inputCopy, inputCopy.getWeightMatrix()
+                            , ActivationType.ActivationType.SIGMOID_LOGISTIC, etha, beta)
+    weights, errorList, error_min = perceptron.trainPerceptron(inputCopy.getWeightMatrix()[0]
+                                                               , iterations
+                                                               , SelectionType.EPOCA)
+    errorListAcumulator.append(errorList)
 
-print('E1   |  E2    | E3    ||| RESULT                |   EXPECTED')
-for test_vector in testSet:
-    modelResult = weights[1] * test_vector[1] + weights[2] * test_vector[2] + weights[3] * test_vector[3]
-    print(test_vector[1], ' | ', test_vector[2], ' | ', test_vector[3], ' ||| ', modelResult, ' | ', test_vector[4])
-print('error_min= ',error_min)
-
-plotw(wVsIteration)
-
-plotError(errorVsIteration, iterations)
+print(weights)
+plotError(errorListAcumulator)
+print('E0  | E1   |  E2    | E3    ||| RESULT                |   EXPECTED')
+for i in range(len(testSet)):
+    modelResult = perceptron.calculateO( np.dot(weights, testSet[i]),perceptron.activationType)
+    if perceptron.activationType != ActivationType.ActivationType.LINEAR:
+        modelResult = perceptron.deNormalize(modelResult)
+    print(testSet[i][0],'  |', testSet[i][1], '| ', testSet[i][2], ' | ', testSet[i][3], ' ||| ', modelResult, ' | ', testResults[i][0])
