@@ -32,10 +32,10 @@ class Perceptron:
         error = 0
         for i in range(inputMatrix.shape[0]):
             result = resultVector[i][0]
-            if activationType != ActivationType.ActivationType.LINEAR:
-                result = self.normalize(result)
+            #if activationType != ActivationType.ActivationType.LINEAR:
+            #    result = self.normalize(result)
             h = np.dot(inputMatrix[i], weightVector)
-            error += (result - self.calculateO(h, activationType)) ** 2
+            error += (result - self.deNormalize(self.calculateO(h, activationType))) ** 2
         return 0.5 * error
 
     def calculateMinMax(self):
