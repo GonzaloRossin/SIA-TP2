@@ -1,7 +1,11 @@
+from unittest import result
 import numpy
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+
+from ActivationType import ActivationType
 
 
 def readCSV(csv_filepath):
@@ -118,3 +122,19 @@ class InputUtil:
             resultVector = resultVector[np.newaxis, :]
 
         return trainingSet, resultVector
+
+    def exportXYZModel(self, wvsT, perceptron):
+        if os.path.exists("app.cpp"):
+            os.remove("app.cpp")
+        f = open('model.xyz', 'w')
+        inputMatrix, resultVector = self.splitInputFromResult(self.inputMatrix)
+        particleCount = inputMatrix.shape[0]
+        for w in wvsT:
+            f.write(str(particleCount) + '\n' + '\n')
+            for inputVector in inputMatrix:
+                h = np.dot(inputVector, w)
+                result = perceptron.calculateO(h, perceptron.activationType)
+                if perceptron.activationType != ActivationType.LINEAR:
+                    result = perceptron.deNormalize(result)
+                f.write(str(inputVector[1]) + ' ' + str(inputVector[2]) + ' ' + str(inputVector[3]) + ' ' + str(
+                    result) + '\n')

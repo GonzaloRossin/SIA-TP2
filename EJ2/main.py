@@ -47,7 +47,7 @@ errorListAcumulator = []
 etha = 0.0001
 iterations = 10000
 beta = 1
-for i in range(1):
+for i in range(5):
     inputCopy = copy.deepcopy(inputUtil)
     perceptron = Perceptron(copy.deepcopy(trainingSet), inputCopy, inputCopy.getWeightMatrix()
                             , ActivationType.ActivationType.SIGMOID_TANH, etha, beta)
