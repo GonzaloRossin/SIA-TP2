@@ -1,2 +1,2 @@
-etha,beta,training_percentage,iterations,activationType,trainingType
-0.001,1,80,500,linear,epoca
+etha,beta,training_percentage,iterations,activationType,trainingType,graph_option
+0.001,1,80,500,linear,epoca,3

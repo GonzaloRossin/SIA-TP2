@@ -99,6 +99,9 @@ def getTrainingData(inputUtil, etha, beta, iterations, trainingPercentage, activ
 def exportXYZModel(inputUtil, etha, beta, trainingPercentage, iterations, activationType, selectionType):
     wVsT, perceptron = getTrainingData(inputUtil, etha, beta, iterations, trainingPercentage, activationType,
                                        selectionType, 1)
+    
+    if os.path.exists("model.xyz"):
+        os.remove("model.xyz")
 
     f = open('model.xyz', 'w')
     inputMatrix, _ = inputUtil.splitInputFromResult(inputUtil.getInputMatrix())

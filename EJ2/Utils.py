@@ -31,7 +31,7 @@ def getparamethers():
     df = pd.read_csv("parameters.csv")
 
     return df['etha'][0], df['beta'][0], df['training_percentage'][0], df['iterations'][0], getActivationType(df) \
-        , getSelectionType(df)
+        , getSelectionType(df), df['graph_option'][0]
 
 
 class InputUtil:
