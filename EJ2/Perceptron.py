@@ -95,7 +95,7 @@ class Perceptron:
         error_min = 1000000
         w_min = None
     
-        while error_min > 0 and i < upper_limit:
+        while error_min > 0.0001 and i < upper_limit:
             if selectionType == SelectionType.SelectionType.RANDOM:
                 pickInput = random.choice(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(pickInput)

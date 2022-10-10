@@ -48,13 +48,14 @@ def plotBestProportion(inputUtil, etha, beta, iterations):
     plt.ylabel("error cuadratico medio", fontsize=12)
     plt.title("error durante testeo (Tanh)")
     plt.bar(trainingSetProportions, averageListTanh, color="blue", width=1)
-    plt.savefig("./plots/errorByProportionsTanh, etha= "+str(etha)+",beta= "+str(beta)+", epochs= "+str(iterations)+".png")
+    plt.savefig("./plots/errorByProportionsTanh, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
+        iterations) + ".png")
     plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
     plt.ylabel("error cuadratico medio", fontsize=12)
     plt.title("error durante testeo (Logistica)")
     plt.bar(trainingSetProportions, averageListLogistic, color="blue", width=1)
-    plt.savefig("./plots/errorByProportionsLogistic, etha= "+str(etha)+",beta= "+str(beta)+", epochs= "+str(iterations)+".png")
-
+    plt.savefig("./plots/errorByProportionsLogistic, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
+        iterations) + ".png")
 
 
 def calculateError(errorMatrix):
@@ -77,25 +78,46 @@ def calculateError(errorMatrix):
     return x, average, minValues, maxValues
 
 
-def getErrorData(inputUtil, etha, beta, iterations, trainingPercentage, activationType, selectionType):
+def getTrainingData(inputUtil, etha, beta, iterations, trainingPercentage, activationType, selectionType, averageCount):
     errorListAcumulator = []
 
-    for i in range(5):
+    for i in range(averageCount):
         trainingSet, _ = inputUtil.getTrainingSetByPercentage(trainingPercentage)
         inputCopy = copy.deepcopy(inputUtil)
         perceptron = Perceptron(copy.deepcopy(trainingSet), inputCopy, inputCopy.getWeightMatrix()
                                 , activationType, etha, beta)
-        _, errorList, _ = perceptron.trainPerceptron(inputCopy.getWeightMatrix()[0]
+        _, errorList, wVsT = perceptron.trainPerceptron(inputCopy.getWeightMatrix()[0]
                                                         , iterations
                                                         , selectionType)
         errorListAcumulator.append(errorList)
+    if averageCount > 1:
+        return errorListAcumulator
+    else:
+        return wVsT, perceptron
 
-    return errorListAcumulator
+
+def exportXYZModel(inputUtil, etha, beta, trainingPercentage, iterations, activationType, selectionType):
+    wVsT, perceptron = getTrainingData(inputUtil, etha, beta, iterations, trainingPercentage, activationType,
+                                       selectionType, 1)
+
+    f = open('model.xyz', 'w')
+    inputMatrix, _ = inputUtil.splitInputFromResult(inputUtil.getInputMatrix())
+    particleCount = inputMatrix.shape[0]
+    for w in wVsT:
+        f.write(str(particleCount) + '\n' + '\n')
+        for inputVector in inputMatrix:
+            h = np.dot(inputVector, w)
+            result = perceptron.calculateO(h, perceptron.activationType)
+            if perceptron.activationType != ActivationType.LINEAR:
+                result = perceptron.deNormalize(result)
+            f.write(str(inputVector[1]) + ' ' + str(inputVector[2]) + ' ' + str(inputVector[3]) + ' ' + str(
+                result) + '\n')
 
 
 def plotError(inputUtil, etha, beta, iterations, trainingPercentage, activationType, selectionType):
-    x, average, minValues, maxValues = calculateError(getErrorData(inputUtil, etha, beta, iterations, trainingPercentage
-                                                          , activationType, selectionType))
+    x, average, minValues, maxValues = calculateError(
+        getTrainingData(inputUtil, etha, beta, iterations, trainingPercentage
+                        , activationType, selectionType, 5))
     plt.plot(x, average, label="error")
     plt.fill_between(x, minValues, maxValues, color="lightblue", label="error")
     plt.legend()
@@ -107,10 +129,15 @@ def plotError(inputUtil, etha, beta, iterations, trainingPercentage, activationT
     plt.ylabel("error cuadratico medio", fontsize=12)
     if activationType == ActivationType.LINEAR:
         plt.title("evolución del error durante entrenamiento (Linear)")
-        plt.savefig("./plots/errorDuringTrainingLinear, etha= "+str(etha)+", iterations= "+str(iterations)+", percentage= "+str(trainingPercentage)+"%.png")
+        plt.savefig("./plots/errorDuringTrainingLinear, etha= " + str(etha) + ", iterations= " + str(
+            iterations) + ", percentage= " + str(trainingPercentage) + "%.png")
     elif activationType == ActivationType.SIGMOID_LOGISTIC:
         plt.title("evolución del error durante entrenamiento (logistica)")
-        plt.savefig("./plots/errorByProportionsLogistic, etha= "+str(etha)+",beta= "+str(beta)+", iterations= "+str(iterations)+", percentage= "+str(trainingPercentage)+"%.png")
+        plt.savefig(
+            "./plots/errorByProportionsLogistic, etha= " + str(etha) + ",beta= " + str(beta) + ", iterations= " + str(
+                iterations) + ", percentage= " + str(trainingPercentage) + "%.png")
     else:
         plt.title("evolución del error durante entrenamiento (Tanh)")
-        plt.savefig("./plots/errorByProportionsLogistic, etha= "+str(etha)+",beta= "+str(beta)+", iterations= "+str(iterations)+", percentage= "+str(trainingPercentage)+"%.png")
+        plt.savefig(
+            "./plots/errorByProportionsLogistic, etha= " + str(etha) + ",beta= " + str(beta) + ", iterations= " + str(
+                iterations) + ", percentage= " + str(trainingPercentage) + "%.png")
