@@ -5,10 +5,12 @@ from data import *
 from activation_function import *
 
 
-
-def perceptron(input, expected, l_rate, epochs):
+def perceptron(input, expected, l_rate, epochs, operation):
     # weight list
-    w = np.zeros(len(input[0]))
+    if operation == "and":
+        w = np.zeros(len(input[0]))
+    else:
+        w = np.ones(len(input[0]))
 
     # list for predicted values at each epoch
     predicted = np.ones(len(expected))
@@ -40,13 +42,10 @@ def perceptron(input, expected, l_rate, epochs):
                 w[j] += l_rate*(expected[i] - predicted[i])*input[i][j]
                 
                 
-        
+        print("w: ", w)
         # appending number of misclassified examples for each epoch
         n_wrong.append(n_miss)
-        n += 1
-        
-    print("Wrong prediction for last epoch:")
-    print(n_wrong)   
+        n += 1 
      
     return w, n_wrong
 
