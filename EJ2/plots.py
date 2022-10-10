@@ -44,10 +44,17 @@ def plotBestProportion(inputUtil, etha, beta, iterations):
         averageListLogistic.append(mean(resultsMap[proportion][ActivationType.SIGMOID_LOGISTIC]))
         averageListTanh.append(mean(resultsMap[proportion][ActivationType.SIGMOID_TANH]))
 
-    plt.bar(trainingSetProportions, averageListTanh, width=1)
-    plt.show()
-    plt.bar(trainingSetProportions, averageListLogistic, width=1)
-    plt.show()
+    plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
+    plt.ylabel("error cuadratico medio", fontsize=12)
+    plt.title("error durante testeo (Tanh)")
+    plt.bar(trainingSetProportions, averageListTanh, color="blue", width=1)
+    plt.savefig("./plots/errorByProportionsTanh, etha= "+str(etha)+",beta= "+str(beta)+", epochs= "+str(iterations)+".png")
+    plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
+    plt.ylabel("error cuadratico medio", fontsize=12)
+    plt.title("error durante testeo (Logistica)")
+    plt.bar(trainingSetProportions, averageListLogistic, color="blue", width=1)
+    plt.savefig("./plots/errorByProportionsLogistic, etha= "+str(etha)+",beta= "+str(beta)+", epochs= "+str(iterations)+".png")
+
 
 
 def calculateError(errorMatrix):
@@ -89,8 +96,21 @@ def getErrorData(inputUtil, etha, beta, iterations, trainingPercentage, activati
 def plotError(inputUtil, etha, beta, iterations, trainingPercentage, activationType, selectionType):
     x, average, minValues, maxValues = calculateError(getErrorData(inputUtil, etha, beta, iterations, trainingPercentage
                                                           , activationType, selectionType))
-
     plt.plot(x, average, label="error")
     plt.fill_between(x, minValues, maxValues, color="lightblue", label="error")
     plt.legend()
-    plt.show()
+    if selectionType == SelectionType.EPOCA:
+        plt.xlabel("epocas", fontsize=12)
+    else:
+        plt.xlabel("iteraciones", fontsize=12)
+
+    plt.ylabel("error cuadratico medio", fontsize=12)
+    if activationType == ActivationType.LINEAR:
+        plt.title("evolución del error durante entrenamiento (Linear)")
+        plt.savefig("./plots/errorDuringTrainingLinear, etha= "+str(etha)+", iterations= "+str(iterations)+", percentage= "+str(trainingPercentage)+"%.png")
+    elif activationType == ActivationType.SIGMOID_LOGISTIC:
+        plt.title("evolución del error durante entrenamiento (logistica)")
+        plt.savefig("./plots/errorByProportionsLogistic, etha= "+str(etha)+",beta= "+str(beta)+", iterations= "+str(iterations)+", percentage= "+str(trainingPercentage)+"%.png")
+    else:
+        plt.title("evolución del error durante entrenamiento (Tanh)")
+        plt.savefig("./plots/errorByProportionsLogistic, etha= "+str(etha)+",beta= "+str(beta)+", iterations= "+str(iterations)+", percentage= "+str(trainingPercentage)+"%.png")
