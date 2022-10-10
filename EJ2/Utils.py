@@ -1,39 +1,44 @@
-from unittest import result
-import numpy
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 
 from ActivationType import ActivationType
+from SelectionType import SelectionType
 
 
 def readCSV(csv_filepath):
     df = pd.read_csv(csv_filepath)
     return df
 
-def getEtha():
-    df = pd.read_csv("parameters.csv")
-    return df['etha']
 
-def getBeta():
-    df = pd.read_csv("parameters.csv")
-    return df['beta']
+def getActivationType(df):
+    if df['activationType'][0] == 'tanh':
+        return ActivationType.SIGMOID_TANH
+    elif df['activationType'][0] == 'logistic':
+        return ActivationType.SIGMOID_LOGISTIC
+    else:
+        return ActivationType.LINEAR
 
-def getIterations():
-    df = pd.read_csv("parameters.csv")
-    return df['iterations']
 
-def getIterations():
+def getSelectionType(df):
+    if df['trainingType'][0] == 'epoca':
+        return SelectionType.EPOCA
+    else:
+        return SelectionType.RANDOM
+
+
+def getparamethers():
     df = pd.read_csv("parameters.csv")
-    return df['iterations']
+
+    return df['etha'][0], df['beta'][0], df['training_percentage'][0], df['iterations'][0], getActivationType(df) \
+        , getSelectionType(df)
 
 
 class InputUtil:
     def __init__(self, csv_path):
         df = readCSV(csv_path)
         self.inputMatrix = np.zeros((len(df.x1), 5))
-        self.weightMatrix = np.zeros((1, 4)) 
+        self.weightMatrix = np.zeros((1,4))
         for i in range(len(df.x1)):
             for j in range(5):
                 if j == 0:
@@ -54,7 +59,7 @@ class InputUtil:
         return self.weightMatrix
 
     def getTrainingSetByPercentage(self, percentage):
-        
+
         np.random.shuffle(self.inputMatrix)
         totalRows = self.inputMatrix.shape[0]
         trainingSet = np.array([self.inputMatrix[0]])

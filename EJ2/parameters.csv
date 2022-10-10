@@ -1,2 +1,2 @@
 etha,beta,training_percentage,iterations,activationType,trainingType
-0.001,1,50,2000,tanh,epoch
+0.001,1,80,500,linear,epoca
