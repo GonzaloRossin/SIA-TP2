@@ -1,2 +1,2 @@
-weird_N,beta
-0.001,1
+etha,beta,training_percentage,iterations,activationType,trainingType
+0.001,1,50,2000,tanh,epoch

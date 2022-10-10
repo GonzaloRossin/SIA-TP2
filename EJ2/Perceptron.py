@@ -41,7 +41,7 @@ class Perceptron:
         return 0.5 * error
 
     def calculateMinMax(self):
-        inputMatrix, resultVector = self.utils.splitInputFromResult(self.utils.inputMatrix)
+        _, resultVector = self.utils.splitInputFromResult(self.utils.inputMatrix)
         return min(resultVector)[0], max(resultVector)[0]
 
     def normalize(self, result):
@@ -103,7 +103,7 @@ class Perceptron:
                 np.random.shuffle(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
             w = self.calculateWeights(self.activationType, w)
-            error = self.calculateError(self.trainingInput, w, self.activationType)
+            error = self.calculateError(self.trainingInput, self.resultVector, w, self.activationType)
             wVsT.append(copy.deepcopy(w))
             if error < error_min:
                 error_min = error
@@ -111,4 +111,4 @@ class Perceptron:
             errorVsT.append(error)
             i += 1
 
-        return w_min, errorVsT, wVsT, error_min
+        return w_min, errorVsT, wVsT
