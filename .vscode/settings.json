@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./EJ3/multilayer_utils"
+    ]
+}

@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from utils.InputHandler import InputHandler
 from multilayer_utils.Normalization import denormalize
-from multilayer_utils.Predictions import predict_multiclass
+from multilayer_utils.Prediction import predict_multiclass
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
 
 def ejC_main():
@@ -18,7 +18,6 @@ def ejC_main():
     # Training
     parameters, errors = multilayer_perceptron(train_X, train_Y, input_handler)
 
-    #'''
     # Predictions
     if (input_handler.ratio == 100):    # if training set uses all the dataset
         test_X = train_X
@@ -46,7 +45,6 @@ def ejC_main():
         print(f"Prediction =\n{np.squeeze(P)}\n")  # 0/1 Predictions
         print(f"Accuracy =  {np.mean((P == test_Y)) * 100}%\n")
 
-
     # Graphics
     fig = plt.subplot()
     fig.set_title("Error function")
@@ -54,9 +52,6 @@ def ejC_main():
     fig.set_ylabel("Error")
     fig.plot(errors)
     plt.show()
-    #'''
-
-    # TODO: Output graphics
 
 
 if __name__ == "__main__":

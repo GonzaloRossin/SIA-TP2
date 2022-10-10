@@ -74,3 +74,12 @@ class InputHandler:
             self.beta1 = input['optimizer']['adam']['beta1']
             self.beta2 = input['optimizer']['adam']['beta2']
             self.epsilon = input['optimizer']['adam']['epsilon']
+        
+        if (input['adaptive_etha']['after'] > 0):
+            self.use_adaptive_etha = True
+            self.adaptive_etha = {}
+            self.adaptive_etha['after'] = input['adaptive_etha']['after']
+            self.adaptive_etha['a'] = input['adaptive_etha']['a']
+            self.adaptive_etha['b'] = input['adaptive_etha']['b']
+        else:
+            self.use_adaptive_etha = False

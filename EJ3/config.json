@@ -10,12 +10,12 @@
     "num_outputs": 10,
 
     "apply_bias": 0,
-    "learning_rate": 0.0001,
+    "learning_rate": 0.001,
 
-    "num_epochs": 50000,
+    "num_epochs": 10000,
     
     "use_mini_batches": 0,
-    "mini_batch_size": 1,
+    "mini_batch_size": 10,
 
     "hidden_layers": {
         "use_num": 0,
@@ -26,12 +26,18 @@
     },
 
     "optimizer": {
-        "method": "adam",
+        "method": "",
         "momentum_alpha": 0.9,
         "adam": {
             "beta1": 0.9,
             "beta2": 0.999,
             "epsilon": 1e-8
         }
-    }   
+    },
+
+    "adaptive_etha": {
+        "after": 2,
+        "a": 0.01,
+        "b": 0.0001
+    }
 }

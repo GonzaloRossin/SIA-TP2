@@ -2,7 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 from utils.InputHandler import InputHandler
-from multilayer_utils.Predictions import predict
+from multilayer_utils.Prediction import predict
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
 from multilayer_utils.Normalization import denormalize
 
@@ -46,14 +46,12 @@ def ejB_main():
         print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
         denormalized_P = denormalize(P, input_handler.min_y, input_handler.max_y, input_handler.output_activation)
         print(f"Prediction = {np.squeeze(denormalized_P)}\n")  # 0/1 Predictions
-        print(f"Accuracy =  {str(np.mean((denormalized_P == test_Y)))}\n")
+        print(f"Accuracy =  {np.mean((denormalized_P == test_Y)) * 100}%\n")
     else:
         print(f"Expected = {np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")
         print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
-        print(f"Accuracy =  {str(np.mean((P == test_Y)))}\n")
-
-
+        print(f"Accuracy =  {np.mean((P == test_Y)) * 100}%\n")
 
     '''
     print(f"Trained parameters\n {parameters}\n")
@@ -64,12 +62,8 @@ def ejB_main():
     fig.set_title("Error function")
     fig.set_xlabel("Epochs")
     fig.set_ylabel("Error")
-    #fig.set_ylim([0, 1])
-    #fig.plot(errors, marker='o')
     fig.plot(errors)
     plt.show()
-
-    # TODO: Output graphics
 
 
 if __name__ == "__main__":

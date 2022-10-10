@@ -18,13 +18,15 @@ def tanh_loss(O, Y):
 
 def compute_error(O, Y, activation):
     num_examples = Y.shape[1]
+    loss = linear_regression_loss(O, Y)
+    '''
     if (activation == RELU):
         loss = linear_regression_loss(O, Y)
     elif (activation == SIGMOID):
-        loss = linear_regression_loss(O, Y)
-        #loss = logistic_regression_loss(O,Y)
+        loss = logistic_regression_loss(O,Y)
     else:
         loss = tanh_loss(O,Y)
+    '''
     error = np.sum(loss) / num_examples
     #error = np.squeeze(error)   # fix [[error]] to [error]
     return error

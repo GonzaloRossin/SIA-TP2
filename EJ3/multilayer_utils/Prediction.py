@@ -1,6 +1,6 @@
 import numpy as np
 from utils.constants import *
-from multilayer_utils.Propagations import model_forward
+from multilayer_utils.Propagation import model_forward
 
 def logistic_prediction(X, trained_parameters, hidden_activation, apply_bias):
     O, _ = model_forward(X, trained_parameters, apply_bias, hidden_activation, SIGMOID)
