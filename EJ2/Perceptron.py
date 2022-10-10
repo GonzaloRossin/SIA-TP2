@@ -1,3 +1,4 @@
+import copy
 from locale import normalize
 import math
 import random
@@ -28,18 +29,19 @@ class Perceptron:
         elif activationType == ActivationType.ActivationType.SIGMOID_LOGISTIC:
             return 1/(1 + math.pow(math.e, -2*self.beta*h))
 
-    def calculateError(self, inputMatrix, weightVector, activationType):
+    def calculateError(self, inputMatrix, resultVector, weightVector, activationType):
         error = 0
         for i in range(inputMatrix.shape[0]):
-            result = self.resultVector[i][0]
-            if activationType != ActivationType.ActivationType.LINEAR:
-                result = self.normalize(result)
+            result = resultVector[i][0]
             h = np.dot(inputMatrix[i], weightVector)
-            error += (result - self.calculateO(h, activationType)) ** 2
+            if activationType != ActivationType.ActivationType.LINEAR:
+                error += (result - self.deNormalize(self.calculateO(h, activationType))) ** 2
+            else:
+                error += (result - self.calculateO(h, activationType)) ** 2
         return 0.5 * error
 
     def calculateMinMax(self):
-        inputMatrix, resultVector = self.utils.splitInputFromResult(self.utils.inputMatrix)
+        _, resultVector = self.utils.splitInputFromResult(self.utils.inputMatrix)
         return min(resultVector)[0], max(resultVector)[0]
 
     def normalize(self, result):
@@ -86,8 +88,10 @@ class Perceptron:
 
     def trainPerceptron(self, weight_vector, upper_limit, selectionType):
         errorVsT = []
+        wVsT = []
         i = 0
         w = weight_vector
+        wVsT.append(copy.deepcopy(w))
         error_min = 1000000
         w_min = None
     
@@ -99,11 +103,12 @@ class Perceptron:
                 np.random.shuffle(self.inputMatrix)
                 self.trainingInput, self.resultVector = self.utils.splitInputFromResult(self.inputMatrix)
             w = self.calculateWeights(self.activationType, w)
-            error = self.calculateError(self.trainingInput, w, self.activationType)
+            error = self.calculateError(self.trainingInput, self.resultVector, w, self.activationType)
+            wVsT.append(copy.deepcopy(w))
             if error < error_min:
                 error_min = error
                 w_min = w
             errorVsT.append(error)
             i += 1
 
-        return w_min, errorVsT, error_min
+        return w_min, errorVsT, wVsT

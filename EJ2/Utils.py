@@ -1,7 +1,9 @@
-import numpy
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+import os
+
+from ActivationType import ActivationType
+from SelectionType import SelectionType
 
 
 def readCSV(csv_filepath):
@@ -9,61 +11,34 @@ def readCSV(csv_filepath):
     return df
 
 
-def plotw(wOverT):
-    i = 0
-    iterations = []
-    w1 = []
-    w2 = []
-    w3 = []
-    for weight in wOverT:
-        w1.append(weight[0])
-        w2.append(weight[1])
-        w3.append(weight[2])
-        iterations.append(i)
-        i += 1
-    plt.plot(iterations, w1, label="w1")
-    plt.plot(iterations, w2, label="w2")
-    plt.plot(iterations, w3, label="w3")
-    plt.legend()
-    plt.show()
+def getActivationType(df):
+    if df['activationType'][0] == 'tanh':
+        return ActivationType.SIGMOID_TANH
+    elif df['activationType'][0] == 'logistic':
+        return ActivationType.SIGMOID_LOGISTIC
+    else:
+        return ActivationType.LINEAR
 
 
-def calculateError(errorMatrix):
-    i = 0
-    x = []
-    maxError = []
-    average = []
-    minError = []
-    while i < len(errorMatrix[0]):
-        x.append(i)
-        errorValues = []
-        for errorList in errorMatrix:
-            errorValues.append(errorList[i])
-        arr = np.asarray(errorValues)
-        maxError.append(max(arr))
-        average.append(sum(arr) / len(errorValues))
-        minError.append(min(arr))
-        i += 1
-    MError = sum(maxError) / len(maxError)
-    mError = sum(minError) / len(minError)
-    return x, MError, mError, average
+def getSelectionType(df):
+    if df['trainingType'][0] == 'epoca':
+        return SelectionType.EPOCA
+    else:
+        return SelectionType.RANDOM
 
 
-def plotError(errorVsT):
-    x, maxError, minError, average = calculateError(errorVsT)
+def getparamethers():
+    df = pd.read_csv("parameters.csv")
 
-    # plt.plot(x, minError, label = "minError")
-    plt.plot(x, average, label="error")
-    #plt.fill_between(x, average - minError, average + maxError, label="error")
-    plt.legend()
-    plt.show()
+    return df['etha'][0], df['beta'][0], df['training_percentage'][0], df['iterations'][0], getActivationType(df) \
+        , getSelectionType(df)
 
 
 class InputUtil:
     def __init__(self, csv_path):
         df = readCSV(csv_path)
         self.inputMatrix = np.zeros((len(df.x1), 5))
-        self.weightMatrix = np.zeros((1, 4))
+        self.weightMatrix = np.zeros((1,4))
         for i in range(len(df.x1)):
             for j in range(5):
                 if j == 0:
@@ -85,6 +60,7 @@ class InputUtil:
 
     def getTrainingSetByPercentage(self, percentage):
 
+        np.random.shuffle(self.inputMatrix)
         totalRows = self.inputMatrix.shape[0]
         trainingSet = np.array([self.inputMatrix[0]])
         currentRows = 1
@@ -122,3 +98,19 @@ class InputUtil:
             resultVector = resultVector[np.newaxis, :]
 
         return trainingSet, resultVector
+
+    def exportXYZModel(self, wvsT, perceptron):
+        if os.path.exists("app.cpp"):
+            os.remove("app.cpp")
+        f = open('model.xyz', 'w')
+        inputMatrix, resultVector = self.splitInputFromResult(self.inputMatrix)
+        particleCount = inputMatrix.shape[0]
+        for w in wvsT:
+            f.write(str(particleCount) + '\n' + '\n')
+            for inputVector in inputMatrix:
+                h = np.dot(inputVector, w)
+                result = perceptron.calculateO(h, perceptron.activationType)
+                if perceptron.activationType != ActivationType.LINEAR:
+                    result = perceptron.deNormalize(result)
+                f.write(str(inputVector[1]) + ' ' + str(inputVector[2]) + ' ' + str(inputVector[3]) + ' ' + str(
+                    result) + '\n')
