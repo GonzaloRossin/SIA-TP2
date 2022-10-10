@@ -8,9 +8,6 @@ def plot(input, expected, weights, title):
     plt.title(title)
     plt.xlim([-2,2])
     plt.ylim([-1.5,1.5])
-    #weights[0] += 0.00001
-    #weights[1] += 0.00001
-    #weights[2] += 0.00001
     x = np.arange(-2,3,0.1)
     y = ((-1 * weights[2] / weights[1]) * x) + (-1 * weights[0] / weights[1])
     for i in range(0, len(input)):

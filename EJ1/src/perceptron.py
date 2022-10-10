@@ -32,12 +32,8 @@ def perceptron(input, expected, l_rate, epochs):
             predicted[i] = simple_escalon(sum_w_d, 0)
             
             # checking if prediction is right
-            if predicted[i] == -1:
-                if expected[i] == 1:
-                    n_miss += 1
-            elif predicted[i] == 1:
-                if expected[i] == -1:
-                    n_miss += 1
+            if predicted[i] != expected[i]:
+                n_miss += 1
 
             for j in range(0,len(w)):
             # weight update
@@ -50,7 +46,7 @@ def perceptron(input, expected, l_rate, epochs):
         n += 1
         
     print("Wrong prediction for last epoch:")
-    print(n_wrong[epochs - 1])   
+    print(n_wrong)   
      
     return w, n_wrong
 
