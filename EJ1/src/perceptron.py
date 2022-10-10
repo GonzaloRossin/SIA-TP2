@@ -32,7 +32,7 @@ def perceptron(input, expected, l_rate, epochs):
             predicted[i] = simple_escalon(sum_w_d, 0)
             
             # checking if prediction is right
-            if predicted[i] == 0:
+            if predicted[i] == -1:
                 if expected[i] == 1:
                     n_miss += 1
             elif predicted[i] == 1:
