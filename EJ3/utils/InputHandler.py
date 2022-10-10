@@ -1,30 +1,30 @@
 import numpy as np
-from utils.constants import LOGISTIC
+from utils.constants import *
 from multilayer_utils.Normalization import normalize
+
+def random_layer_dims(feature_num, output_num, num_hidden_layers, max_dim):
+    layer_dims = []
+    layer_dims.append(feature_num)
+    for i in range(num_hidden_layers):
+        layer_dims.append(np.random.random_integers(2, max_dim))
+    layer_dims.append(output_num)
+    return layer_dims
+
+def read_input(input_filepath, num_features):
+    X = []
+    Y = []
+    with open(input_filepath) as input_file:
+        input_file.readline()   # skip header
+        lines = input_file.readlines()
+        for line in lines:
+            XY = line.split(",")
+            XY = list(map(lambda z: int(z), XY))
+            X.append(XY[:num_features])
+            Y.append(XY[num_features:])
+    return X, Y
 
 class InputHandler:
     
-    def random_layers_dim(self, feature_num, output_num, num_hidden_layers, max_dim):
-        layers_dim = []
-        layers_dim.append(feature_num)
-        for i in range(num_hidden_layers):
-            layers_dim.append(np.random.random_integers(2, max_dim))
-        layers_dim.append(output_num)
-        return layers_dim
-
-    def read_input(self, input_filepath, num_features):
-        X = []
-        Y = []
-        with open(input_filepath) as input_file:
-            input_file.readline()   # skip header
-            lines = input_file.readlines()
-            for line in lines:
-                XY = line.split(",")
-                XY = list(map(lambda z: int(z), XY))
-                X.append(XY[:num_features])
-                Y.append(XY[num_features:])
-        return X, Y
-
     def __init__(self, input):
 
         self.apply_bias = (input['apply_bias']==1)
@@ -38,7 +38,7 @@ class InputHandler:
         num_features = input['num_features']
         num_outputs = input['num_outputs']
 
-        X, Y = self.read_input(input['input_file'], num_features)
+        X, Y = read_input(input['input_file'], num_features)
         if (self.normalize):
             Y, self.min_y, self.max_y = normalize(Y, self.output_activation)
 
@@ -55,18 +55,22 @@ class InputHandler:
         self.test_set_Y = np.array(test_Y).T
         
         if (input['hidden_layers']['use_num']):
-            self.layers_dim = self.random_layers_dim(num_features, num_outputs, input['hidden_layers']['num_layers'], input['hidden_layers']['max_dim'])
+            self.layer_dims = random_layer_dims(num_features, num_outputs, input['hidden_layers']['num_layers'], input['hidden_layers']['max_dim'])
         else:
-            self.layers_dim = [num_features] + input['hidden_layers']['layer_dims'] + [num_outputs]
-        print(f"\nLayers dim = {self.layers_dim}\n")
+            self.layer_dims = [num_features] + input['hidden_layers']['layer_dims'] + [num_outputs]
+        print(f"\nLayers dim = {self.layer_dims}\n")
 
         self.num_epochs = input['num_epochs']
-        # TODO: Implement mini-batches
         
-        '''
-        self.use_mini_batches = (input['use_mini_batches']==1)
-        if (self.use_mini_batches):
-            self.batch_size = min(input['mini_batch_size'], len(self.training_set))
+        if (input['use_mini_batches']==1):
+            self.batch_size = min(input['mini_batch_size'], self.training_set_X.shape[1])
         else:
-            self.batch_size = len(self.training_set)
-        '''
+            self.batch_size = self.training_set_X.shape[1]
+
+        self.optimizer = input['optimizer']['method']
+        if (self.optimizer == MOMENTUM):
+            self.momentum_alpha = input['optimizer']['momentum_alpha']
+        elif (self.optimizer == ADAM):
+            self.beta1 = input['optimizer']['adam']['beta1']
+            self.beta2 = input['optimizer']['adam']['beta2']
+            self.epsilon = input['optimizer']['adam']['epsilon']
