@@ -50,11 +50,15 @@ Para poder observar la evolución del vector W durante el entrenamiento es neces
 
 Para ejecutar el ejercicio 2, uno debe moverse al directorio llamado "EJ2" por medio del siguiente comando mientras se esta ubicado en la carpeta raíz del proyecto:
 
-`cd EJ2`
+```bash
+    cd EJ2
+```
 
 Para correr el ejercicio se utiliza el siguiente comando ubicado dentro del directorio para correr el ejercicio:
 
-`python main.py`
+```bash
+    python main.py
+```
 
 Es posible cambiar los parámetros de entrenamiento del perceptrón por medio del csv llamado "parameters.csv" ubicado en el directorio raíz del ejercico. Algunos de los parámetros que es posible editar son:
 
@@ -77,12 +81,12 @@ Una vez generado el archivo .xyz, se debe abrir este archivo por medio del softw
  - columna 3: position (eje z)
  - columna 4: charge
  
- ![column mapping](https://github.com/GonzaloRossin/SIA-TP2/main/tutorial_images/column_maping.png?raw=true)
+ ![column mapping](/tutorial_images/column_maping.PNG)
  
  Por ultimo, debemos agregar la modificación "color coding"
  
- ![color coding](https://github.com/GonzaloRossin/SIA-TP2/main/tutorial_images/color_coding.png?raw=true)
+ ![color coding](/tutorial_images/color_coding.png)
  
  y ajustar el rango de color entre 0 y 89 para asi poder ver la evolución por medio del cambio de color de las particulas( las coordenadas representan E1, E2, E3 mientras que el color representa el resultado del modelo evaluado en sus respectivos inputs)
  
- ![adjust color range](https://github.com/GonzaloRossin/SIA-TP2/main/tutorial_images/limits.png?raw=true)
+ ![adjust color range](tutorial_images/limits.PNG)
