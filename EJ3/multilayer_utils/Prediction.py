@@ -1,6 +1,6 @@
 import numpy as np
 from utils.constants import *
-from multilayer_utils.Propagations import model_forward
+from multilayer_utils.Propagation import model_forward
 
 def logistic_prediction(X, trained_parameters, hidden_activation, apply_bias):
     O, _ = model_forward(X, trained_parameters, apply_bias, hidden_activation, SIGMOID)
@@ -27,3 +27,11 @@ def predict_decision_boundary(X, trained_parameters, apply_bias, hidden_activati
     O, _ = model_forward(X, trained_parameters, apply_bias, hidden_activation, SIGMOID)
     P = (O > 0.5)
     return P
+
+def predict_multiclass(X, trained_parameters, hidden_activation, output_activation, apply_bias):
+    O, _ = model_forward(X, trained_parameters, apply_bias, hidden_activation, output_activation)
+    P = []
+    for output in O:
+        max_val = np.max(output)
+        P.append(1 * (output == max_val))
+    return O, P

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# black magic lets goo
+# plot borders between classes
 def plot_decision_boundary(model, X, fig):
     # set min and max values, add padding
     x_min, x_max = X[0,:].min() - 1, X[0,:].max() + 1

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from utils.plotter import plot_decision_boundary
 from utils.constants import LOGISTIC
 from utils.InputHandler import InputHandler
-from multilayer_utils.Predictions import predict, predict_decision_boundary
+from multilayer_utils.Prediction import predict, predict_decision_boundary
 from multilayer_utils.MultilayerPerceptron import multilayer_perceptron
 from multilayer_utils.Normalization import denormalize
 
@@ -16,13 +16,6 @@ def ejA_main():
 
     train_X = input_handler.training_set_X
     train_Y = input_handler.training_set_Y
-    
-    '''
-    print(f"train_X = \n{train_X}\n")
-    print(f"train_Y = {train_Y}\n")
-    print(f"test_X = \n{test_X}\n")
-    print(f"test_Y = {test_Y}\n")
-    '''
     
     # Training
     parameters, errors = multilayer_perceptron(train_X, train_Y, input_handler)
@@ -39,17 +32,17 @@ def ejA_main():
 
     '''
     print(f"Y_norm = {np.squeeze(train_Y)}\n")
-    print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
     '''
     
     if (input_handler.normalize):
         P = denormalize(P, input_handler.min_y, input_handler.max_y, input_handler.output_activation)
         test_Y = np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))
-        print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
+        print(f"\nDenormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
     else:
         test_Y = np.squeeze(test_Y)
         print(f"Output = {np.squeeze(O)}\n")
 
+    print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
     print(f"Expected = {test_Y}\n")
     print(f"Accuracy =  {np.mean((P == test_Y)) * 100}%\n")
 
@@ -58,8 +51,6 @@ def ejA_main():
     '''
 
     # Graphics
-
-    # Output graphics
     fig, axs = plt.subplots(1,2)
     axs[0].set_title('Data classification')
     axs[0].set_xlabel("x1")
@@ -67,7 +58,6 @@ def ejA_main():
     plot_decision_boundary(lambda x: predict_decision_boundary(x.T,parameters,input_handler.apply_bias,input_handler.hidden_activation), test_X, axs[0])
     pairs_X = test_X.T
     axs[0].scatter(pairs_X[:,0], pairs_X[:,1], s=100, c=test_Y)
-
     axs[1].set_title("Error function")
     axs[1].set_xlabel("Epochs")
     axs[1].set_ylabel("Error")
