@@ -1,3 +1,4 @@
+from cProfile import label
 import copy
 from statistics import mean
 
@@ -11,12 +12,14 @@ from Utils import *
 def plotBestProportion(inputUtil, etha, beta, iterations):
     trainingSetProportions = [10, 20, 30, 40, 50, 60, 70, 80]
     resultsMap = {}
-    averageListTanh = []
-    averageListLogistic = []
+    averageListTanhTest = []
+    averageListTanhTraining = []
+    averageListLogisticTest = []
+    averageListLogisticTraining = []
 
     for proportion in trainingSetProportions:
-        resultsMap[proportion] = {ActivationType.SIGMOID_LOGISTIC: [],
-                                  ActivationType.SIGMOID_TANH: []}
+        resultsMap[proportion] = {ActivationType.SIGMOID_LOGISTIC: {'training': [], 'test': []},
+                                  ActivationType.SIGMOID_TANH: {'training': [], 'test':[]}}
 
     for i in range(5):
         for trainingPercentage in trainingSetProportions:
@@ -34,26 +37,40 @@ def plotBestProportion(inputUtil, etha, beta, iterations):
                                                                        , iterations
                                                                        , SelectionType.EPOCA)
 
-            resultsMap[trainingPercentage][perceptronTanh.activationType].append(
+            resultsMap[trainingPercentage][perceptronTanh.activationType]['test'].append(
                 perceptronTanh.calculateError(testSet, testResults, weightsTanh, perceptronTanh.activationType))
-            resultsMap[trainingPercentage][perceptronLogistic.activationType].append(
+            resultsMap[trainingPercentage][perceptronLogistic.activationType]['test'].append(
                 perceptronLogistic.calculateError(testSet, testResults, weightsLogistic,
+                                                  perceptronLogistic.activationType))
+            trainingSet, trainingResults = inputUtil.splitInputFromResult(trainingSet)
+            resultsMap[trainingPercentage][perceptronTanh.activationType]['training'].append(
+                perceptronTanh.calculateError(trainingSet, trainingResults, weightsTanh, perceptronTanh.activationType))
+            resultsMap[trainingPercentage][perceptronLogistic.activationType]['training'].append(
+                perceptronLogistic.calculateError(trainingSet, trainingResults, weightsLogistic,
                                                   perceptronLogistic.activationType))
 
     for proportion in trainingSetProportions:
-        averageListLogistic.append(mean(resultsMap[proportion][ActivationType.SIGMOID_LOGISTIC]))
-        averageListTanh.append(mean(resultsMap[proportion][ActivationType.SIGMOID_TANH]))
+        averageListLogisticTest.append(mean(resultsMap[proportion][ActivationType.SIGMOID_LOGISTIC]['test']))
+        averageListLogisticTraining.append(mean(resultsMap[proportion][ActivationType.SIGMOID_LOGISTIC]['training']))
+        averageListTanhTest.append(mean(resultsMap[proportion][ActivationType.SIGMOID_TANH]['test']))
+        averageListTanhTraining.append(mean(resultsMap[proportion][ActivationType.SIGMOID_TANH]['training']))
 
+    width = 0.3
+    x = np.arange(len(trainingSetProportions))
     plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
     plt.ylabel("error cuadratico medio", fontsize=12)
-    plt.title("error durante testeo (Tanh)")
-    plt.bar(trainingSetProportions, averageListTanh, color="blue", width=1)
+    plt.title("error en ambos sets (Tanh)")
+    plt.bar(x, averageListTanhTest,width, color='g', label='test')
+    plt.bar(x+width, averageListTanhTraining,width, color='b',label ='training')
+    plt.xticks(x + width / 2, ('10', '20', '30','40','50','60','70','80'))
+    plt.legend()
     plt.savefig("./plots/errorByProportionsTanh, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
         iterations) + ".png")
     plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
     plt.ylabel("error cuadratico medio", fontsize=12)
-    plt.title("error durante testeo (Logistica)")
-    plt.bar(trainingSetProportions, averageListLogistic, color="blue", width=1)
+    plt.title("error en ambos sets (Logistica)")
+    plt.bar(x, averageListLogisticTest,width, color='g')
+    plt.bar(x+width, averageListLogisticTraining,width, color='b')
     plt.savefig("./plots/errorByProportionsLogistic, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
         iterations) + ".png")
 

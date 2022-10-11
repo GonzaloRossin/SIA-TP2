@@ -74,7 +74,7 @@ class InputUtil:
         currentRows += 1
         while currentRows < totalRows:
             row = np.array(self.inputMatrix[currentRows])
-            testSet = np.append(trainingSet, [row], axis=0)
+            testSet = np.append(testSet, [row], axis=0)
             currentRows += 1
 
         return trainingSet, testSet
