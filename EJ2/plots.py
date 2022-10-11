@@ -55,24 +55,23 @@ def plotBestProportion(inputUtil, etha, beta, iterations):
         averageListTanhTest.append(mean(resultsMap[proportion][ActivationType.SIGMOID_TANH]['test']))
         averageListTanhTraining.append(mean(resultsMap[proportion][ActivationType.SIGMOID_TANH]['training']))
 
-
+    width = 0.3
+    x = np.arange(len(trainingSetProportions))
     plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
     plt.ylabel("error cuadratico medio", fontsize=12)
-    plt.title("error durante testeo (Tanh)")
-    plt.bar(trainingSetProportions, averageListTanhTest, color='g')
-    plt.savefig("./plots/errorByProportionsTanhTest, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
-        iterations) + ".png")
-    plt.bar(trainingSetProportions, averageListTanhTraining, color='b')
-    plt.savefig("./plots/errorByProportionsTanhTrining, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
+    plt.title("error en ambos sets (Tanh)")
+    plt.bar(x, averageListTanhTest,width, color='g', label='test')
+    plt.bar(x+width, averageListTanhTraining,width, color='b',label ='training')
+    plt.xticks(x + width / 2, ('10', '20', '30','40','50','60','70','80'))
+    plt.legend()
+    plt.savefig("./plots/errorByProportionsTanh, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
         iterations) + ".png")
     plt.xlabel("porcentaje de entrenamiento (%)", fontsize=12)
     plt.ylabel("error cuadratico medio", fontsize=12)
-    plt.title("error durante testeo (Logistica)")
-    plt.bar(trainingSetProportions, averageListLogisticTest, color='g')
-    plt.savefig("./plots/errorByProportionsLogisticTest, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
-        iterations) + ".png")
-    plt.bar(trainingSetProportions, averageListLogisticTraining, color='b')
-    plt.savefig("./plots/errorByProportionsLogisticTraining, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
+    plt.title("error en ambos sets (Logistica)")
+    plt.bar(x, averageListLogisticTest,width, color='g')
+    plt.bar(x+width, averageListLogisticTraining,width, color='b')
+    plt.savefig("./plots/errorByProportionsLogistic, etha= " + str(etha) + ",beta= " + str(beta) + ", epochs= " + str(
         iterations) + ".png")
 
 
