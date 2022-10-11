@@ -17,17 +17,17 @@ En caso de no tenerlas instaladas, se pueden ejecutar los siguientes comandos pa
 
 ### Ejercicio 1
 
-#### Run program
+#### Ejecutar programa
 
-Must be in directory EJ1/src:
+Debe estar en carpeta EJ1/src:
 
 ```bash
     python main.py
 ```
 
-#### Manage inputs
+#### Administrar parámetros
 
-To manage inputs there is a config.json file, where we can manage three different parameters of our program.
+Para administrar parámetros hay un archivo config.json,donde podemos gestionar tres parámetros diferentes de nuestro programa.
 
 ```json
 {
@@ -37,8 +37,8 @@ To manage inputs there is a config.json file, where we can manage three differen
 }
 ```
 
-Where operation can either be "and" or "xor".
-The other two parameters learning rate and number of epochs can have any number that we see fit.
+Donde la operación puede ser "and" o "xor".
+Los otros dos parámetros learning rate y numero de épocas pueden tener cualquier número que consideremos oportuno.
 
 ### Ejercicio 2
 
