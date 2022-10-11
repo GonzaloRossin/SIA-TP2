@@ -141,6 +141,8 @@ def ejC_etha():
 
 def ejC_noise():
 
+    np.random.seed(1)
+
     with open('config.json', 'r') as f:
         json_file = json.load(f)
         input_handler = InputHandler(json_file)
@@ -170,12 +172,12 @@ def ejC_noise():
         acc.append(np.mean((P == test_Y)) * 100)
     accs.append(np.mean(acc))
 
-    noise = np.random.rand(test_X.shape[0],test_X.shape[1])
-    test_X = test_X + noise
+    noise1 = np.random.rand(test_X.shape[0],test_X.shape[1])
+    test_X_noise_1 = test_X + noise1
 
     acc = []
     for i in range(5):
-        O, P = predict_multiclass(test_X, parameters, input_handler.hidden_activation, input_handler.output_activation, input_handler.apply_bias)
+        O, P = predict_multiclass(test_X_noise_1, parameters, input_handler.hidden_activation, input_handler.output_activation, input_handler.apply_bias)
         '''
         print(f"Expected =\n{np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")
@@ -185,12 +187,12 @@ def ejC_noise():
         acc.append(np.mean((P == test_Y)) * 100)
     accs.append(np.mean(acc))
 
-    noise = 2 * np.random.rand(test_X.shape[0],test_X.shape[1]) - 1
-    test_X = test_X + noise
+    noise2 = 2 * np.random.rand(test_X.shape[0],test_X.shape[1]) - 1
+    test_X_noise_2 = test_X + noise2
 
     acc = []
     for i in range(5):
-        O, P = predict_multiclass(test_X, parameters, input_handler.hidden_activation, input_handler.output_activation, input_handler.apply_bias)
+        O, P = predict_multiclass(test_X_noise_2, parameters, input_handler.hidden_activation, input_handler.output_activation, input_handler.apply_bias)
         '''
         print(f"Expected =\n{np.squeeze(test_Y)}\n")
         print(f"Output = {np.squeeze(O)}\n")
