@@ -72,7 +72,9 @@ Es posible cambiar los parámetros de entrenamiento del perceptrón por medio de
 El ultimo parámetro "graph_option" determina el gráfico que se quiere generar. El parámetro puede tomar los siguientes valores:
 - `1`:  genera el gráfico de error cuadratico medio en función del porcentaje de entrenamiento. Para este gráfico, el parámetro "training_percentage" y "activationType" del csv no serán utilizados. El gráfico generado utilizan las sigmoideas(tanh y logistic) como función de activación
 - `2`: genera el gráfico de error cuadratico medio en función de las epocas durante el entrenamiento
-- `3`: genera un archivo .xyz con la evolución del vector W en función de las iteraciones durante el entrenamiento. De esta manera es posible ver como el modelo evoluciona para inferir un modelo en base a los parametros utilizados.
+- `3`: genera un archivo .xyz con la evolución del vector W en función de las iteraciones durante el entrenamiento. De esta manera es posible ver como el modelo evoluciona para inferir un modelo en base a los parametros utilizados. El modelo sera exportado como "model.xyz"
+
+los graficos de las opciones 1 y 2, seran guardadas en el directorio plots de la carpeta raiz del ejercicio.
 
 #### Instrucciones de uso de ovito
 Una vez generado el archivo .xyz, se debe abrir este archivo por medio del software ovito. Una vez abierto el archivo, se abrirá un menú en el cual es posible mapear las columnas del archivo. Las columnas deben estar mapeadas de la siguiente forma:
@@ -91,7 +93,7 @@ Una vez generado el archivo .xyz, se debe abrir este archivo por medio del softw
  
  ![adjust color range](tutorial_images/limits.PNG)
 
-### Ejercicio 2
+### Ejercicio 3
 
 #### Ejecución del proyecto
 Para ejecutar el perceptrón multicapa, primero hay que posicionarse en la carpeta "EJ3":
