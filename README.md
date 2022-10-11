@@ -77,4 +77,12 @@ Una vez generado el archivo .xyz, se debe abrir este archivo por medio del softw
  - columna 3: position (eje z)
  - columna 4: charge
  
- Por ultimo, debemos agregar la modificación "color coding" ajustando el rango de color entre 0 y 89 para asi poder ver la evolución por medio del cambio de color de las particulas( las coordenadas representan E1, E2, E3 mientras que el color representa el resultado del modelo evaluado en sus respectivos inputs)
+ ![column mapping](https://github.com/GonzaloRossin/SIA-TP2/main/tutorial_images/column_maping.png?raw=true)
+ 
+ Por ultimo, debemos agregar la modificación "color coding"
+ 
+ ![color coding](https://github.com/GonzaloRossin/SIA-TP2/main/tutorial_images/color_coding.png?raw=true)
+ 
+ y ajustar el rango de color entre 0 y 89 para asi poder ver la evolución por medio del cambio de color de las particulas( las coordenadas representan E1, E2, E3 mientras que el color representa el resultado del modelo evaluado en sus respectivos inputs)
+ 
+ ![adjust color range](https://github.com/GonzaloRossin/SIA-TP2/main/tutorial_images/limits.png?raw=true)
