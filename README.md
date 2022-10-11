@@ -90,3 +90,169 @@ Una vez generado el archivo .xyz, se debe abrir este archivo por medio del softw
  y ajustar el rango de color entre 0 y 89 para asi poder ver la evolución por medio del cambio de color de las particulas( las coordenadas representan E1, E2, E3 mientras que el color representa el resultado del modelo evaluado en sus respectivos inputs)
  
  ![adjust color range](tutorial_images/limits.PNG)
+
+### Ejercicio 2
+
+#### Ejecución del proyecto
+Para ejecutar el perceptrón multicapa, primero hay que posicionarse en la carpeta "EJ3":
+
+```bash
+    cd EJ3
+```
+
+De ser necesario, se instalan los requerimientos:
+
+```bash
+    pip install -r requirements.txt
+```
+
+Luego, dependiendo del ejercicio, se definen las configuraciones y se ejecuta el archivo python correspondiente:
+
+**3A: Ejercicio XOR.**
+```json
+{
+    "normalize": 1,
+    "hidden_activation": "relu",
+    "output_activation": "sigmoid",
+
+    "input_file": "./input_files/a.txt",
+    "training_set_ratio": 100,
+
+    "num_features": 2,
+    "num_outputs": 1,
+
+    "apply_bias": 0,
+    "learning_rate": 0.001,
+
+    "num_epochs": 5000,
+    
+    "use_mini_batches": 0,
+    "mini_batch_size": 1,
+
+    "hidden_layers": {
+        "use_num": 0,
+        "num_layers": 5,
+        "max_dim": 20,
+        "__or": "",
+        "layer_dims": [10]
+    },
+
+    "optimizer": {
+        "method": "gd",
+        "momentum_alpha": 0.9,
+        "adam": {
+            "beta1": 0.9,
+            "beta2": 0.999,
+            "epsilon": 1e-8
+        }
+    },
+
+    "adaptive_etha": {
+        "after": 0,
+        "a": 0.01,
+        "b": 0.0001
+    }
+}
+```
+```bash
+    python a.py
+```
+
+**3B: Ejercicio Paridad de Mapa de Bits.**
+```json
+{
+    "normalize": 0,
+    "hidden_activation": "relu",
+    "output_activation": "sigmoid",
+
+    "input_file": "./input_files/b.txt",
+    "training_set_ratio": 100,
+
+    "num_features": 35,
+    "num_outputs": 1,
+
+    "apply_bias": 0,
+    "learning_rate": 0.00001,
+
+    "num_epochs": 100000,
+    
+    "use_mini_batches": 0,
+    "mini_batch_size": 1,
+
+    "hidden_layers": {
+        "use_num": 0,
+        "num_layers": 5,
+        "max_dim": 20,
+        "__or": "",
+        "layer_dims": [10]
+    },
+
+    "optimizer": {
+        "method": "momentum",
+        "momentum_alpha": 0.9,
+        "adam": {
+            "beta1": 0.9,
+            "beta2": 0.999,
+            "epsilon": 1e-8
+        }
+    },
+
+    "adaptive_etha": {
+        "after": 1,
+        "a": 0.01,
+        "b": 0.0001
+    }
+}
+```
+```bash
+    python b.py
+```
+**3C: Ejercicio Identificar Número por su Mapa de Bits.**
+```json
+{
+    "normalize": 0,
+    "hidden_activation": "relu",
+    "output_activation": "sigmoid",
+
+    "input_file": "./input_files/c.txt",
+    "training_set_ratio": 100,
+
+    "num_features": 35,
+    "num_outputs": 10,
+
+    "apply_bias": 0,
+    "learning_rate": 0.0001,
+
+    "num_epochs": 50000,
+    
+    "use_mini_batches": 0,
+    "mini_batch_size": 1,
+
+    "hidden_layers": {
+        "use_num": 0,
+        "num_layers": 5,
+        "max_dim": 20,
+        "__or": "",
+        "layer_dims": [10]
+    },
+
+    "optimizer": {
+        "method": "adam",
+        "momentum_alpha": 0.9,
+        "adam": {
+            "beta1": 0.9,
+            "beta2": 0.999,
+            "epsilon": 1e-8
+        }
+    },
+
+    "adaptive_etha": {
+        "after": 5,
+        "a": 0.01,
+        "b": 0.0001
+    }
+}
+```
+```bash
+    python c.py
+```
