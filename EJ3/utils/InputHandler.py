@@ -25,7 +25,7 @@ def read_input(input_filepath, num_features):
 
 class InputHandler:
     
-    def __init__(self, input):
+    def __init__(self, input, ratio=-1):
 
         self.apply_bias = (input['apply_bias']==1)
         self.num_layers = input['hidden_layers']['num_layers']
@@ -42,7 +42,11 @@ class InputHandler:
         if (self.normalize):
             Y, self.min_y, self.max_y = normalize(Y, self.output_activation)
 
-        self.ratio = input['training_set_ratio']
+        if (ratio < 0):
+            self.ratio = input['training_set_ratio']
+        else:
+            self.ratio = ratio
+
         training_idx = len(X) * self.ratio // 100
         train_X = X[:training_idx]
         train_Y = Y[:training_idx]
@@ -58,7 +62,7 @@ class InputHandler:
             self.layer_dims = random_layer_dims(num_features, num_outputs, input['hidden_layers']['num_layers'], input['hidden_layers']['max_dim'])
         else:
             self.layer_dims = [num_features] + input['hidden_layers']['layer_dims'] + [num_outputs]
-        print(f"\nLayers dim = {self.layer_dims}\n")
+        #print(f"\nLayers dim = {self.layer_dims}\n")
 
         self.num_epochs = input['num_epochs']
         
@@ -68,12 +72,12 @@ class InputHandler:
             self.batch_size = self.training_set_X.shape[1]
 
         self.optimizer = input['optimizer']['method']
-        if (self.optimizer == MOMENTUM):
-            self.momentum_alpha = input['optimizer']['momentum_alpha']
-        elif (self.optimizer == ADAM):
-            self.beta1 = input['optimizer']['adam']['beta1']
-            self.beta2 = input['optimizer']['adam']['beta2']
-            self.epsilon = input['optimizer']['adam']['epsilon']
+        #if (self.optimizer == MOMENTUM):
+        self.momentum_alpha = input['optimizer']['momentum_alpha']
+        #elif (self.optimizer == ADAM):
+        self.beta1 = input['optimizer']['adam']['beta1']
+        self.beta2 = input['optimizer']['adam']['beta2']
+        self.epsilon = input['optimizer']['adam']['epsilon']
         
         if (input['adaptive_etha']['after'] > 0):
             self.use_adaptive_etha = True

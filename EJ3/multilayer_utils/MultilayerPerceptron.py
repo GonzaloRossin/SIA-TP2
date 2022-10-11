@@ -1,12 +1,13 @@
 import numpy as np
 from utils.constants import *
+import matplotlib.pyplot as plt
 from utils.InputHandler import InputHandler
 from multilayer_utils.Errors import compute_error
 from multilayer_utils.PerceptronParameters import *
 from multilayer_utils.Propagation import model_forward, model_backward
 
-def random_mini_batches(X, Y, mini_batch_size):
-    # np.random.seed(1)
+def random_mini_batches(X, Y, mini_batch_size, seed):
+    #np.random.seed(seed)
     num_examples = X.shape[1]  # number of training examples
     c = Y.shape[0]  # number of classes
     mini_batches = []
@@ -44,7 +45,7 @@ def multilayer_perceptron(X, Y, input_handler: InputHandler):
     for epoch in range(1, input_handler.num_epochs+1):
         if (epoch % 1000 == 0):
             print(f"Epoch #{epoch}")
-        minibatches = random_mini_batches(X, Y, input_handler.batch_size)
+        minibatches = random_mini_batches(X, Y, input_handler.batch_size, epoch)
         total_error = []
         for minibatch in minibatches:
             (minibatch_X, minibatch_Y) = minibatch

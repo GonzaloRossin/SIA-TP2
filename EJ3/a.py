@@ -32,17 +32,17 @@ def ejA_main():
 
     '''
     print(f"Y_norm = {np.squeeze(train_Y)}\n")
-    print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
     '''
     
     if (input_handler.normalize):
         P = denormalize(P, input_handler.min_y, input_handler.max_y, input_handler.output_activation)
         test_Y = np.squeeze(denormalize(test_Y, input_handler.min_y, input_handler.max_y, input_handler.output_activation))
-        print(f"Denormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
+        print(f"\nDenormalized Output = {np.squeeze(denormalize(O, input_handler.min_y, input_handler.max_y, input_handler.output_activation))}\n")
     else:
         test_Y = np.squeeze(test_Y)
         print(f"Output = {np.squeeze(O)}\n")
 
+    print(f"Prediction = {np.squeeze(P)}\n")  # 0/1 Predictions
     print(f"Expected = {test_Y}\n")
     print(f"Accuracy =  {np.mean((P == test_Y)) * 100}%\n")
 
